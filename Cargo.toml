@@ -1,0 +1,12 @@
+[package]
+name = "tape"
+version = "0.1.0"
+edition = "2021"
+authors = ["lopo<lopo@zju.edu.cn>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eframe = { version = "0.22.0" }
+egui_extras = { version = "0.22.0", features = ["image", "svg"] }
+image = "0.24.6"
