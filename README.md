@@ -3,6 +3,10 @@
 `Tape` is an application for recording mouse and/or keyboard actions, generating a recording file that can be played
 back later.
 
+### Project structure
+
+To be done... when the structure of the project stabilizes
+
 ### Library usage
 
 - [egui](https://github.com/emilk/egui) -- **GUI** implementation of the application
