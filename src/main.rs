@@ -1,9 +1,7 @@
-use std::path::PathBuf;
-
-mod app;
-mod record;
 mod act;
+mod app;
 mod canonicalize;
+mod record;
 
 fn main() {
     println!("Hello, world!");
