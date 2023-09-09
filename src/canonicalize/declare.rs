@@ -64,7 +64,7 @@ pub enum CanonicalKey {
     Menu,
     Enter,
     Backspace,
-    // Alphabet keys -- 48
+    // Printable keys -- 48
     KeyA,
     KeyB,
     KeyC,
@@ -101,16 +101,29 @@ pub enum CanonicalKey {
     Num7,
     Num8,
     Num9,
-    Tilde,
+    BackQuote,
     Minus,
     Equal,
     LBracket,
     RBracket,
-    Backslash,
+    BackSlash,
     Semicolon,
     Quote,
     Comma,
     Period,
     Slash,
     Space,
+    // Unknown keys -- 1
+    Unknown,
+}
+
+pub enum CanonicalButton {
+    // Mouse buttons -- 5
+    Left,
+    Right,
+    Middle,
+    Back,
+    Forward,
+    // Unknown buttons -- 1
+    Unknown,
 }
