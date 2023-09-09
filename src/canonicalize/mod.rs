@@ -1,3 +1,3 @@
 mod declare;
-
-use enigo::Key;
+pub mod convert_enigo;
+pub mod convert_dq;
