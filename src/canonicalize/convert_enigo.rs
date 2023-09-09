@@ -37,8 +37,8 @@ impl From<Key> for CanonicalKey {
             Key::Multiply => CanonicalKey::NumPadMultiply,
             Key::Subtract => CanonicalKey::NumPadMinus,
             Key::Add => CanonicalKey::NumPadPlus,
-            Key::Separator => CanonicalKey::NumPadEnter,
-            Key::Decimal => CanonicalKey::NumPadDot,
+            Key::Separator => CanonicalKey::NumPadSeparator,
+            Key::Decimal => CanonicalKey::NumPadDecimal,
             // Navigation & Arrow keys -- 10
             Key::Insert => CanonicalKey::Insert,
             Key::Delete => CanonicalKey::Delete,
@@ -162,8 +162,8 @@ impl TryFrom<CanonicalKey> for Key {
             CanonicalKey::NumPadMultiply => Ok(Key::Multiply),
             CanonicalKey::NumPadMinus => Ok(Key::Subtract),
             CanonicalKey::NumPadPlus => Ok(Key::Add),
-            CanonicalKey::NumPadEnter => Ok(Key::Separator),
-            CanonicalKey::NumPadDot => Ok(Key::Decimal),
+            CanonicalKey::NumPadSeparator => Ok(Key::Separator),
+            CanonicalKey::NumPadDecimal => Ok(Key::Decimal),
             // Navigation & Arrow keys -- 10
             CanonicalKey::Insert => Ok(Key::Insert),
             CanonicalKey::Delete => Ok(Key::Delete),

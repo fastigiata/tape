@@ -32,8 +32,8 @@ pub enum CanonicalKey {
     NumPadMultiply,
     NumPadMinus,
     NumPadPlus,
-    NumPadEnter,
-    NumPadDot,
+    NumPadSeparator,
+    NumPadDecimal,
     // Navigation & Arrow keys -- 10
     Insert,
     Delete,
