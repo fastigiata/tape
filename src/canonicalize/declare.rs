@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum CanonicalKey {
     // Function keys  -- 16
     Escape,
@@ -117,6 +118,7 @@ pub enum CanonicalKey {
     Unknown,
 }
 
+#[derive(Debug)]
 pub enum CanonicalButton {
     // Mouse buttons -- 5
     Left,
