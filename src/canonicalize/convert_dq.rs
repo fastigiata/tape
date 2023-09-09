@@ -1,5 +1,5 @@
 use device_query::{MouseButton, Keycode};
-use crate::canonicalize::declare::{CanonicalButton, CanonicalKey};
+use crate::canonicalize::declaration::{CanonicalButton, CanonicalKey};
 
 // TODO: pr for missing keys in device_query
 impl From<Keycode> for CanonicalKey {

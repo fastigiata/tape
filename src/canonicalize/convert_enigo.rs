@@ -1,5 +1,5 @@
 use enigo::{Key, MouseButton};
-use crate::canonicalize::declare::{CanonicalButton, CanonicalKey};
+use crate::canonicalize::declaration::{CanonicalButton, CanonicalKey};
 
 impl From<Key> for CanonicalKey {
     fn from(value: Key) -> Self {
@@ -57,15 +57,15 @@ impl From<Key> for CanonicalKey {
             Key::RShift => CanonicalKey::RShift,
             Key::LControl => CanonicalKey::LCtrl,
             Key::RControl => CanonicalKey::RCtrl,
-            /// note: 'alt' on windows and linux, 'option' on mac
+            // note: 'alt' on windows and linux, 'option' on mac
             Key::LMenu => CanonicalKey::LAlt,
-            /// note: 'alt' on windows and linux, 'option' on mac
+            // note: 'alt' on windows and linux, 'option' on mac
             Key::RMenu => CanonicalKey::RAlt,
-            /// note: 'command' on mac, 'windows' on windows, 'super' on linux
+            // note: 'command' on mac, 'windows' on windows, 'super' on linux
             Key::LWin => CanonicalKey::LMeta,
-            /// note: 'command' on mac, 'windows' on windows, 'super' on linux
+            // note: 'command' on mac, 'windows' on windows, 'super' on linux
             Key::RWin => CanonicalKey::RMeta,
-            /// note: 'menu' on windows
+            // note: 'menu' on windows
             Key::Apps => CanonicalKey::Menu,
             Key::Return => CanonicalKey::Enter,
             Key::Backspace => CanonicalKey::Backspace,
