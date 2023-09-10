@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+// ========== ========== Keyboard/Mouse definitions
+
 #[derive(Debug, Serialize, Deserialize)]
 pub enum CanonicalKey {
     // Function keys  -- 16
@@ -130,4 +132,27 @@ pub enum CanonicalButton {
     Forward,
     // Unknown buttons -- 1
     Unknown,
+}
+
+// ========== ========== Action definitions
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum KeyboardAction {
+    Press,
+    Release,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum MouseAction {
+    Press,
+    Release,
+    Move,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum CanonicalAction {
+    /// A keyboard action -- (type, key)
+    Keyboard(KeyboardAction, CanonicalKey),
+    /// A mouse action -- (type, button, (x, y))
+    Mouse(MouseAction, CanonicalButton, (i32, i32)),
 }
