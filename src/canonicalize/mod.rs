@@ -7,7 +7,7 @@ pub mod convert_enigo;
 pub mod convert_dq;
 
 /// An **action** is a single event that can be performed by an [actor](../act/struct.Actor.html)
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Action {
     /// The timestamp of the happening of the action
     pub ctime: i64,
@@ -36,7 +36,7 @@ impl Action {
 }
 
 /// A **script** is a sequence of [action](struct.Action.html)s recorded by a [recorder](../rec/struct.Recorder.html) for an [actor](../act/struct.Actor.html) to perform
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Script {
     /// The timestamp of creation of the script
     pub ctime: i64,
@@ -69,10 +69,10 @@ impl Script {
         Ok(())
     }
 
-    /// Parse a script from a TOML string.
-    /// Return the script if success (with self-check),
-    /// or the error message if failed
-    pub fn parse(raw: String) -> Result<Script, String> {
+    /// Load a script from a TOML string.
+    /// If the parsing is successful and the self-test passes, the script will be returned,
+    /// otherwise an error message will be returned.
+    pub fn load(raw: String) -> Result<Script, String> {
         match toml::from_str::<Script>(&raw) {
             Ok(script) => {
                 match script.self_check() {
@@ -85,7 +85,7 @@ impl Script {
     }
 
     /// Create a empty script
-    pub fn new() -> Script {
+    pub fn empty() -> Script {
         let t = Utc::now();
         Script {
             ctime: t.timestamp_millis(),
@@ -127,7 +127,7 @@ mod unit_test {
 
     #[test]
     fn script_serde() {
-        let mut mv = Script::new();
+        let mut mv = Script::empty();
         thread::sleep(Duration::from_secs(1));
         mv.add_keyboard_action(ActionType::Press, CanonicalKey::KeyA);
         thread::sleep(Duration::from_secs(2));
