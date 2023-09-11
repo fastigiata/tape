@@ -1,6 +1,6 @@
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use crate::canonicalize::declaration::{CanonicalAction, CanonicalButton, CanonicalKey, KeyboardAction, MouseAction};
+use crate::canonicalize::declaration::{ActionType, CanonicalAction, CanonicalButton, CanonicalKey};
 
 pub mod declaration;
 pub mod convert_enigo;
@@ -18,19 +18,19 @@ pub struct Action {
 }
 
 impl Action {
-    pub fn from_keyboard(ev: KeyboardAction, target: CanonicalKey) -> Action {
+    pub fn from_keyboard(ev: ActionType, target: CanonicalKey) -> Action {
         Action {
             ctime: Utc::now().timestamp_millis(),
             timeline: 0,
-            action: CanonicalAction::Keyboard(ev, target),
+            action: CanonicalAction::Keyboard((ev, target)),
         }
     }
 
-    pub fn from_mouse(ev: MouseAction, target: CanonicalButton, pos: (i32, i32)) -> Action {
+    pub fn from_mouse(ev: ActionType, target: CanonicalButton, pos: (i32, i32)) -> Action {
         Action {
             ctime: Utc::now().timestamp_millis(),
             timeline: 0,
-            action: CanonicalAction::Mouse(ev, target, pos),
+            action: CanonicalAction::Mouse((ev, target, pos.0, pos.1)),
         }
     }
 }
@@ -69,6 +69,21 @@ impl Script {
         Ok(())
     }
 
+    /// Parse a script from a TOML string.
+    /// Return the script if success (with self-check),
+    /// or the error message if failed
+    pub fn parse(raw: String) -> Result<Script, String> {
+        match toml::from_str::<Script>(&raw) {
+            Ok(script) => {
+                match script.self_check() {
+                    Ok(_) => Ok(script),
+                    Err(check_err) => Err(check_err),
+                }
+            }
+            Err(parse_err) => Err(format!("{}", parse_err)),
+        }
+    }
+
     /// Create a empty script
     pub fn new() -> Script {
         let t = Utc::now();
@@ -77,14 +92,6 @@ impl Script {
             duration: 0,
             actions: Vec::new(),
         }
-    }
-
-    /// Parse a script from a TOML string
-    pub fn parse(config: String) {
-        // match toml::from_str(&config) {
-        //     Ok(v) => println!("ok! {:?}", v),
-        //     Err(e) => println!("err! {}", e),
-        // }
     }
 
     /// Add an action to the script
@@ -100,12 +107,12 @@ impl Script {
     }
 
     /// Add a keyboard action to the script
-    pub fn add_keyboard_action(&mut self, ev: KeyboardAction, target: CanonicalKey) {
+    pub fn add_keyboard_action(&mut self, ev: ActionType, target: CanonicalKey) {
         self.add_action(Action::from_keyboard(ev, target));
     }
 
     /// Add a mouse action to the script
-    pub fn add_mouse_action(&mut self, ev: MouseAction, target: CanonicalButton, pos: (i32, i32)) {
+    pub fn add_mouse_action(&mut self, ev: ActionType, target: CanonicalButton, pos: (i32, i32)) {
         self.add_action(Action::from_mouse(ev, target, pos));
     }
 }
@@ -113,95 +120,32 @@ impl Script {
 
 #[cfg(test)]
 mod unit_test {
+    use super::*;
     use std::thread;
     use std::time::Duration;
-    use toml::ser::Error;
-    use super::*;
     use crate::canonicalize::declaration::CanonicalButton;
 
     #[test]
-    fn serialize_script() {
-        // let mut mv = Script::new();
-        // thread::sleep(Duration::from_secs(1));
-        // mv.add_keyboard_action(KeyboardAction::Press, CanonicalKey::KeyA);
-        // thread::sleep(Duration::from_secs(2));
-        // mv.add_keyboard_action(KeyboardAction::Release, CanonicalKey::KeyA);
-        // thread::sleep(Duration::from_secs(1));
-        // mv.add_mouse_action(MouseAction::Press, CanonicalButton::Left, (50, 50));
-        // thread::sleep(Duration::from_secs(1));
-        // mv.add_mouse_action(MouseAction::Release, CanonicalButton::Left, (50, 50));
+    fn script_serde() {
+        let mut mv = Script::new();
+        thread::sleep(Duration::from_secs(1));
+        mv.add_keyboard_action(ActionType::Press, CanonicalKey::KeyA);
+        thread::sleep(Duration::from_secs(2));
+        mv.add_keyboard_action(ActionType::Release, CanonicalKey::KeyA);
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Press, CanonicalButton::Left, (50, 50));
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Release, CanonicalButton::Left, (50, 50));
 
-        // match toml::to_string(&mv) {
-        //     Ok(v) => println!("ok! {}", v),
-        //     Err(e) => println!("err! {}", e),
-        // }
-
-        let actions = Action {
-            ctime: 1694355501429,
-            timeline: 1017,
-            action: CanonicalAction::Keyboard(KeyboardAction::Press, CanonicalKey::KeyA),
-        };
-
-        match toml::to_string(&actions) {
-            Ok(v) => println!("ok!\n{}", v),
-            Err(e) => println!("err!\n{}", e),
-        }
-    }
-
-    #[test]
-    fn deserialize_script() {
-        let config = r#"ctime = 1694355501429
-timeline = 1017
-action = ["Press", "KeyA"]"#;
-
-        match toml::from_str::<Action>(&config) {
-            Ok(v) => println!("ok! {:?}", v),
-            Err(e) => println!("err! {}", e),
-        }
-    }
-
-
-    #[derive(Debug, Serialize, Deserialize)]
-    enum XYZ { X, Y, Z }
-
-    #[derive(Debug, Serialize, Deserialize)]
-    enum AB {
-        A((XYZ, i32, i32)),
-        B((XYZ, String, String)),
-    }
-
-    #[derive(Debug, Serialize, Deserialize)]
-    struct Box {
-        inner: Vec<AB>,
-    }
-
-    #[test]
-    fn toml_test() {
-        let my_box = Box {
-            inner: vec![
-                AB::A((XYZ::X, 1, 2)),
-                AB::B((XYZ::Y, "hello".to_string(), "world".to_string())),
-            ],
-        };
-
-        println!("original:\n{:?}", &my_box);
-
-        println!("===== now serialize =====");
-
-        // serialize my_box to a TOML string
-        match toml::to_string(&my_box) {
+        match toml::to_string(&mv) {
             Ok(v) => {
-                println!("ser ok!\n{}", &v);
-
-                println!("===== now deserialize =====");
-
-                // deserialize the TOML string back to my_box
-                match toml::from_str::<Box>(&v) {
-                    Ok(v) => println!("de ok!\n{:?}", v),
-                    Err(e) => println!("de err!\n{}", e),
+                println!("ok! {}", v);
+                match toml::from_str::<Script>(&v) {
+                    Ok(v) => println!("ok! {:?}", v),
+                    Err(e) => println!("err! {}", e),
                 }
             }
-            Err(e) => println!("ser err!\n{}", e),
+            Err(e) => println!("err! {}", e),
         }
     }
 }
