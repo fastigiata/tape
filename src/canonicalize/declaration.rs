@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 // ========== ========== Keyboard/Mouse definitions
 
 /// Keyboard keys
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq)]
 pub enum CanonicalKey {
     // Function keys  -- 16
     Escape,
@@ -124,7 +124,7 @@ pub enum CanonicalKey {
 }
 
 /// Mouse buttons
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq)]
 pub enum CanonicalButton {
     // Mouse buttons -- 5
     Left,
@@ -139,7 +139,7 @@ pub enum CanonicalButton {
 // ========== ========== Action definitions
 
 /// The type of an action
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq)]
 pub enum ActionType {
     Press,
     Release,
@@ -148,7 +148,7 @@ pub enum ActionType {
 }
 
 /// The information of an action
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum CanonicalAction {
     /// A keyboard action -- Tuple(type, key)
     Keyboard((ActionType, CanonicalKey)),
