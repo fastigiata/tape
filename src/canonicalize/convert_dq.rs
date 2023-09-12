@@ -119,6 +119,18 @@ impl From<Keycode> for CanonicalKey {
     }
 }
 
+impl PartialEq<Keycode> for CanonicalKey {
+    fn eq(&self, other: &Keycode) -> bool {
+        CanonicalKey::from(*other) == *self
+    }
+}
+
+impl PartialEq<CanonicalKey> for Keycode {
+    fn eq(&self, other: &CanonicalKey) -> bool {
+        CanonicalKey::from(*self) == *other
+    }
+}
+
 impl TryFrom<CanonicalKey> for Keycode {
     type Error = &'static str;
 
