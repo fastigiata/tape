@@ -30,7 +30,7 @@ impl Action {
         Action {
             ctime: Utc::now().timestamp_millis(),
             timeline: 0,
-            action: CanonicalAction::Mouse(ev, target, pos.0, pos.1),
+            action: CanonicalAction::Mouse(ev, target, pos),
         }
     }
 }

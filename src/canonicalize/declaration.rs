@@ -151,7 +151,12 @@ pub enum ActionType {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum CanonicalAction {
     /// A keyboard action -- Tuple(type, key)
+    /// - type: press/release
+    /// - key: the key to press/release
     Keyboard(ActionType, CanonicalKey),
-    /// A mouse action -- Tuple(type, button, x, y)
-    Mouse(ActionType, CanonicalButton, i32, i32),
+    /// A mouse action -- Tuple(type, button, pos)
+    /// - type: press/release/move (when move, the button is [CanonicalButton::Unknown])
+    /// - button: the button to press/release/move
+    /// - pos: the position to move to or the position of the mouse
+    Mouse(ActionType, CanonicalButton, (i32, i32)),
 }
