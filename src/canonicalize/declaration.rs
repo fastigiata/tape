@@ -151,7 +151,7 @@ pub enum ActionType {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum CanonicalAction {
     /// A keyboard action -- Tuple(type, key)
-    Keyboard((ActionType, CanonicalKey)),
+    Keyboard(ActionType, CanonicalKey),
     /// A mouse action -- Tuple(type, button, x, y)
-    Mouse((ActionType, CanonicalButton, i32, i32)),
+    Mouse(ActionType, CanonicalButton, i32, i32),
 }
