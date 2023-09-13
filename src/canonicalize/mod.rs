@@ -22,7 +22,7 @@ impl Action {
         Action {
             ctime: Utc::now().timestamp_millis(),
             timeline: 0,
-            action: CanonicalAction::Keyboard((ev, target)),
+            action: CanonicalAction::Keyboard(ev, target),
         }
     }
 
@@ -30,7 +30,7 @@ impl Action {
         Action {
             ctime: Utc::now().timestamp_millis(),
             timeline: 0,
-            action: CanonicalAction::Mouse((ev, target, pos.0, pos.1)),
+            action: CanonicalAction::Mouse(ev, target, pos.0, pos.1),
         }
     }
 }
@@ -69,6 +69,16 @@ impl Script {
         Ok(())
     }
 
+    /// Create a empty script
+    pub fn empty() -> Script {
+        let t = Utc::now();
+        Script {
+            ctime: t.timestamp_millis(),
+            duration: 0,
+            actions: Vec::new(),
+        }
+    }
+
     /// Load a script from a TOML string.
     /// If the parsing is successful and the self-test passes, the script will be returned,
     /// otherwise an error message will be returned.
@@ -84,36 +94,12 @@ impl Script {
         }
     }
 
-    /// Create a empty script
-    pub fn empty() -> Script {
-        let t = Utc::now();
-        Script {
-            ctime: t.timestamp_millis(),
-            duration: 0,
-            actions: Vec::new(),
+    /// Publish the script as text
+    pub fn publish(&self) -> Result<String, String> {
+        match self.self_check() {
+            Ok(_) => toml::to_string(self).map_err(|e| format!("{}", e)),
+            Err(check_err) => Err(check_err),
         }
-    }
-
-    /// Add an action to the script
-    pub fn add_action(&mut self, mut action: Action) {
-        // calculate the elapsed time since the creation of the script
-        let elapsed = action.ctime - self.ctime;
-        // update the timeline of the action
-        action.timeline = elapsed;
-        // update the duration of the script
-        self.duration = elapsed;
-        // add the action to the script
-        self.actions.push(action);
-    }
-
-    /// Add a keyboard action to the script
-    pub fn add_keyboard_action(&mut self, ev: ActionType, target: CanonicalKey) {
-        self.add_action(Action::from_keyboard(ev, target));
-    }
-
-    /// Add a mouse action to the script
-    pub fn add_mouse_action(&mut self, ev: ActionType, target: CanonicalButton, pos: (i32, i32)) {
-        self.add_action(Action::from_mouse(ev, target, pos));
     }
 }
 
@@ -123,19 +109,19 @@ mod unit_test {
     use super::*;
     use std::thread;
     use std::time::Duration;
-    use crate::canonicalize::declaration::CanonicalButton;
+    use device_query::Keycode;
 
     #[test]
     fn script_serde() {
         let mut mv = Script::empty();
         thread::sleep(Duration::from_secs(1));
-        mv.add_keyboard_action(ActionType::Press, CanonicalKey::KeyA);
+        mv.add_keyboard_action(ActionType::Press, Keycode::A);
         thread::sleep(Duration::from_secs(2));
-        mv.add_keyboard_action(ActionType::Release, CanonicalKey::KeyA);
+        mv.add_keyboard_action(ActionType::Release, Keycode::K);
         thread::sleep(Duration::from_secs(1));
-        mv.add_mouse_action(ActionType::Press, CanonicalButton::Left, (50, 50));
+        mv.add_mouse_action(ActionType::Press, 1, (50, 50));
         thread::sleep(Duration::from_secs(1));
-        mv.add_mouse_action(ActionType::Release, CanonicalButton::Left, (50, 50));
+        mv.add_mouse_action(ActionType::Release, 0, (50, 50));
 
         match toml::to_string(&mv) {
             Ok(v) => {
