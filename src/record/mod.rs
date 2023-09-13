@@ -74,7 +74,7 @@ impl Recorder {
     /// Start recording.
     /// This will work in a new thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
-    pub fn work(&self) {
+    pub fn record(&self) {
         // set the working flag
         *self.is_working.lock().unwrap() = true;
 
