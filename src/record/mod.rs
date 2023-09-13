@@ -1,17 +1,41 @@
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use chrono::Utc;
-use device_query::{DeviceEvents, DeviceState, Keycode};
-use crate::canonicalize::declaration::CanonicalKey;
-use crate::canonicalize::Script;
+use device_query::{DeviceEvents, DeviceQuery, DeviceState, Keycode, MouseButton};
+use crate::canonicalize::declaration::{ActionType, CanonicalKey};
+use crate::canonicalize::{Action, Script};
+
+// Collection of methods of Script on 'record'
+impl Script {
+    /// Add an action to the script
+    fn add_action(&mut self, mut action: Action) {
+        // calculate the elapsed time since the creation of the script
+        let elapsed = action.ctime - self.ctime;
+        // update the timeline of the action
+        action.timeline = elapsed;
+        // update the duration of the script
+        self.duration = elapsed;
+        // add the action to the script
+        self.actions.push(action);
+    }
+
+    /// Add a keyboard action to the script
+    pub fn add_keyboard_action(&mut self, ev: ActionType, target: Keycode) {
+        self.add_action(Action::from_keyboard(ev, target.into()));
+    }
+
+    /// Add a mouse action to the script
+    pub fn add_mouse_action(&mut self, ev: ActionType, target: MouseButton, pos: (i32, i32)) {
+        self.add_action(Action::from_mouse(ev, target.into(), pos));
+    }
+}
 
 /// The gap between two loops
 const LOOP_GAP: u64 = 100;
 
 /// The type of a record
 #[derive(Debug, Clone, PartialEq)]
-enum RecordType { Keyboard, Mouse, Both }
+pub enum RecordType { Keyboard, Mouse, Both }
 
 impl RecordType {
     pub fn with_keyboard(&self) -> bool {
@@ -24,7 +48,7 @@ impl RecordType {
 }
 
 /// A **recorder** is a person who records your [action](../canonicalize/struct.Action.html)s into a [script](../canonicalize/struct.Script.html) for an [actor](../act/struct.Actor.html) to perform
-struct Recorder {
+pub struct Recorder {
     /// The type of the record
     record_type: RecordType,
     /// The key that stops the recording
@@ -37,34 +61,6 @@ struct Recorder {
 }
 
 impl Recorder {
-    pub fn listen(&self) {
-        *self.is_working.lock().unwrap() = true;
-
-        let flag = Arc::clone(&self.is_working);
-        thread::spawn(move || {
-            let device_state = DeviceState::new();
-
-            let flag_clone = Arc::clone(&flag);
-            let _guard = device_state.on_key_down(move |key| {
-                if key == &Keycode::Escape {
-                    *flag_clone.lock().unwrap() = false;
-                }
-
-                println!("{} is pressed!", key);
-            });
-
-            let _guard = 1;
-
-            println!("on_key_down is set at {}", Utc::now().timestamp_millis());
-
-            while *flag.lock().unwrap() {
-                thread::sleep(Duration::from_millis(LOOP_GAP));
-            };
-
-            println!("listen finished at {}", Utc::now().timestamp_millis())
-        });
-    }
-
     /// Create a new recorder
     pub fn new(record_type: RecordType, stop_signal: Option<CanonicalKey>) -> Self {
         Recorder {
@@ -82,63 +78,116 @@ impl Recorder {
         // set the working flag
         *self.is_working.lock().unwrap() = true;
 
+        let record_type = self.record_type.clone();
+        let stop_signal = self.stop_signal.clone();
+        let is_working = Arc::clone(&self.is_working);
+        let script = Arc::clone(&self.script);
+
         // start the recording thread
-        thread::spawn({
-            let record_type = self.record_type.clone();
-            let stop_signal = self.stop_signal.clone();
-            let is_working = Arc::clone(&self.is_working);
-            let script = Arc::clone(&self.script);
+        thread::spawn(move || {
+            let ds = DeviceState::new();
 
-            move || {
-                let listener = DeviceState::new();
+            // several guards
+            let _guard_kd;
+            let _guard_ku;
+            let _guard_md;
+            let _guard_mu;
+            let _guard_mm;
+            let _guard_ext;
 
-                // need to record 'keyboard'
-                if record_type.with_keyboard() {
-                    println!("need to record keyboard");
+            // keyboard events
+            if record_type.with_keyboard() {
+                // keydown listener
+                let tmp1 = Arc::clone(&is_working);
+                let tmp2 = stop_signal.clone();
+                let tmp3 = Arc::clone(&script);
+                _guard_kd = ds.on_key_down(move |key| {
+                    // if the stop signal is pressed, stop the recording
+                    if tmp2.is_some_and(|v| &v == key) {
+                        *tmp1.lock().unwrap() = false;
+                        return;
+                    }
 
-                    let work_lock = Arc::clone(&is_working);
-                    listener.on_key_down(move |key| {
-                        println!("{} is pressed!", key);
+                    // push the action to the script
+                    tmp3.lock().unwrap().add_keyboard_action(ActionType::Press, *key);
+                });
 
-                        if key == &CanonicalKey::Escape {
-                            *work_lock.lock().unwrap() = false;
-                        }
-                    });
+                // keyup listener
+                let tmp1 = Arc::clone(&is_working);
+                let tmp2 = stop_signal.clone();
+                let tmp3 = Arc::clone(&script);
+                _guard_ku = ds.on_key_up(move |key| {
+                    // if the stop signal is pressed, stop the recording
+                    if tmp2.is_some_and(|v| &v == key) {
+                        *tmp1.lock().unwrap() = false;
+                        return;
+                    }
 
-                    //
-                    listener.on_key_up(|key| {
-                        println!("{} is released!", key);
-                    });
-                }
-
-                // need to record 'mouse'
-                // if record_type.with_mouse() {
-                //     println!("need to record mouse");
-                //
-                //     listener.on_mouse_move(|pos| {
-                //         println!("Mouse moved to {:?}", pos);
-                //     });
-                //     listener.on_mouse_down(|btn| {
-                //         println!("{:?} is pressed!", btn);
-                //     });
-                //     listener.on_mouse_up(|btn| {
-                //         println!("{:?} is released!", btn);
-                //     });
-                // }
-
-                // wait for the stop signal
-                while *is_working.lock().unwrap() {
-                    thread::sleep(Duration::from_millis(LOOP_GAP));
-                };
-
-                println!("stop working");
+                    // push the action to the script
+                    tmp3.lock().unwrap().add_keyboard_action(ActionType::Release, *key);
+                });
+            } else {
+                // if the recorder does not record keyboard events,
+                // we still need to listen to the stop signal
+                // keydown listener
+                let tmp1 = Arc::clone(&is_working);
+                let tmp2 = stop_signal.clone();
+                _guard_ext = ds.on_key_down(move |key| {
+                    // if the stop signal is pressed, stop the recording
+                    if tmp2.is_some_and(|v| &v == key) {
+                        *tmp1.lock().unwrap() = false;
+                        return;
+                    }
+                });
             }
+
+            // mouse events
+            if record_type.with_mouse() {
+                // mousedown listener
+                let tmp1 = DeviceState::new();
+                let tmp2 = Arc::clone(&script);
+                _guard_md = ds.on_mouse_down(move |btn| {
+                    tmp2.lock().unwrap().add_mouse_action(
+                        ActionType::Press, *btn,
+                        tmp1.get_mouse().coords,
+                    );
+                });
+
+                // mouseup listener
+                let tmp1 = DeviceState::new();
+                let tmp2 = Arc::clone(&script);
+                _guard_mu = ds.on_mouse_up(move |btn| {
+                    tmp2.lock().unwrap().add_mouse_action(
+                        ActionType::Release, *btn,
+                        tmp1.get_mouse().coords,
+                    );
+                });
+
+                // mousemove listener
+                let tmp1 = DeviceState::new();
+                let tmp2 = Arc::clone(&script);
+                _guard_mm = ds.on_mouse_move(move |pos| {
+                    tmp2.lock().unwrap().add_mouse_action(
+                        ActionType::Move, 0,
+                        tmp1.get_mouse().coords,
+                    );
+                });
+            }
+
+            // wait for the stop signal
+            while *is_working.lock().unwrap() {
+                thread::sleep(Duration::from_millis(LOOP_GAP));
+            };
         });
     }
 
     /// Finish recording and return the script
     pub fn finish(&self) -> Script {
-        todo!()
+        // set the working flag to false
+        *self.is_working.lock().unwrap() = false;
+
+        // return the script
+        self.script.lock().unwrap().clone()
     }
 }
 
@@ -147,20 +196,15 @@ mod unit_test {
     use super::*;
 
     #[test]
-    fn ppp() {
-        let recorder = Recorder::new(RecordType::Both, Some(CanonicalKey::Escape));
-        recorder.listen();
-
-        loop {}
-    }
-
-    #[test]
     fn record() {
-        let recorder = Recorder::new(RecordType::Both, Some(CanonicalKey::Escape));
+        let recorder = Recorder::new(RecordType::Mouse, Some(CanonicalKey::Escape));
         recorder.work();
 
         thread::sleep(Duration::from_secs(5));
 
-        println!("done");
+        match recorder.finish().publish() {
+            Ok(v) => println!("ok! {}", v),
+            Err(e) => println!("err! {}", e),
+        }
     }
 }
