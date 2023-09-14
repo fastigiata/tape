@@ -38,6 +38,8 @@ impl Action {
 /// A **script** is a sequence of [action](struct.Action.html)s recorded by a [recorder](../rec/struct.Recorder.html) for an [actor](../act/struct.Actor.html) to perform
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Script {
+    /// The name of the script, default to the timestamp of creation
+    pub name: String,
     /// The timestamp of creation of the script
     pub ctime: i64,
     /// The duration of the script in milliseconds
@@ -73,6 +75,7 @@ impl Script {
     pub fn empty() -> Script {
         let t = Utc::now();
         Script {
+            name: t.to_rfc3339(),
             ctime: t.timestamp_millis(),
             duration: 0,
             actions: Vec::new(),
@@ -92,6 +95,11 @@ impl Script {
             }
             Err(parse_err) => Err(format!("{}", parse_err)),
         }
+    }
+
+    /// Rename the script
+    pub fn rename(&mut self, name: String) {
+        self.name = name;
     }
 
     /// Publish the script as text
