@@ -1,12 +1,13 @@
-use eframe::egui;
-use eframe::egui::{Align2, CentralPanel, Color32, FontId, Id, Sense, Stroke, Visuals};
+use eframe::{egui, glow};
+use eframe::egui::{Align, Align2, CentralPanel, Color32, CursorIcon, FontId, Id, RichText, Sense, Stroke, Visuals};
 
 // region Constants
 const APP_COLOR: Color32 = Color32::from_rgb(252, 252, 252);
-const APP_BORDER_WIDTH: f32 = 1.0;
+const APP_BORDER_WIDTH: f32 = 0.5;
 const APP_BORDER_COLOR: Color32 = Color32::from_rgb(0, 0, 0);
 const APP_BORDER_RADIUS: f32 = 8.0;
 const APP_BANNER_H: f32 = 32.0;
+const APP_BANNER_BUTTON_H: f32 = 12.0;
 // endregion
 
 // region Helpers
@@ -19,10 +20,10 @@ pub enum AppRoute { Home, Record, Act, List }
 impl AppRoute {
     pub fn name(&self) -> String {
         match self {
-            AppRoute::Home => "首页",
-            AppRoute::Record => "录制",
-            AppRoute::Act => "播放",
-            AppRoute::List => "记录",
+            AppRoute::Home => "Home",
+            AppRoute::Record => "Record",
+            AppRoute::Act => "Act",
+            AppRoute::List => "List",
         }.to_string()
     }
 }
@@ -78,7 +79,7 @@ impl TapeApp {
             rect.center(),
             Align2::CENTER_CENTER,
             self.app_route.name(),
-            FontId::proportional(20.0),
+            FontId::proportional(16.0),
             Color32::BLACK,
         );
 
@@ -97,7 +98,32 @@ impl TapeApp {
             frame.drag_window();
         }
 
-        // operate the banner -- minimize, maximize, close
+        // operate the banner -- minimize & close
+        ui.allocate_ui_at_rect(rect, |ui| {
+            ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
+                ui.spacing_mut().item_spacing.x = 0.0;
+                ui.visuals_mut().button_frame = false;
+                ui.add_space(8.0);
+
+                // close the window
+                if ui.button(RichText::new("❌").size(APP_BANNER_BUTTON_H))
+                    .on_hover_cursor(CursorIcon::PointingHand)
+                    .on_hover_text_at_pointer("Close the window")
+                    .clicked() {
+                    frame.close();
+                }
+
+                // minimize the window
+                if ui.button(RichText::new("🗕").size(APP_BANNER_BUTTON_H))
+                    .on_hover_cursor(CursorIcon::PointingHand)
+                    .on_hover_text_at_pointer("Minimize the window")
+                    .clicked() {
+                    frame.set_minimized(true);
+                }
+            });
+        });
+
+
         // TODO: https://github.com/emilk/egui/blob/master/examples/custom_window_frame/src/main.rs L123
     }
 
@@ -108,6 +134,10 @@ impl TapeApp {
 impl eframe::App for TapeApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         self.render_app(ctx, frame);
+    }
+
+    fn on_exit(&mut self, _gl: Option<&glow::Context>) {
+        println!("App will exit");
     }
 
     fn clear_color(&self, _visuals: &Visuals) -> [f32; 4] {
