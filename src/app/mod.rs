@@ -7,9 +7,10 @@ mod components;
 pub fn run_tape_app() {
     let options = eframe::NativeOptions {
         always_on_top: false,
-        decorated: true,  // false
-        resizable: false,
         centered: true,
+        resizable: false,
+        decorated: false,
+        transparent: true,
         initial_window_size: Some(egui::vec2(400.0, 200.0)),
         ..Default::default()
     };
