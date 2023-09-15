@@ -64,8 +64,9 @@ impl TapeApp {
 
                 self.render_banner(banner_rect, ui, frame);
 
-
-                ui.label("Hello world!");
+                // TODO: render the outlet following the 'app_route'
+                // self.render_outlet();
+                ui.label("This is just the contents of the window.");
             });
     }
 
