@@ -1,0 +1,1 @@
+const ICON_MIN: &str = "";
