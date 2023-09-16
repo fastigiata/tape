@@ -1,5 +1,6 @@
-use eframe::{egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, Sense, Visuals};
+use eframe::{CreationContext, egui, glow};
+use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, Image, Sense, Vec2, Visuals};
+use crate::app::icons::{IconName, TapeIcon};
 
 // region Constants
 const APP_BORDER_RADIUS: f32 = 8.0;
@@ -37,17 +38,19 @@ impl AppRoute {
 // endregion
 
 pub struct TapeApp {
-    dark_mode: bool,
+    icons: TapeIcon,
     app_state: AppState,
     app_route: AppRoute,
+    dark_mode: bool,
 }
 
 impl TapeApp {
-    pub fn new() -> TapeApp {
+    pub fn new(cc: &CreationContext) -> TapeApp {
         TapeApp {
-            dark_mode: false,
+            icons: TapeIcon::new(&cc.egui_ctx),
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
+            dark_mode: false,
         }
     }
 
@@ -112,6 +115,16 @@ impl TapeApp {
         // TODO: render the outlet following the 'app_route'
 
         ui.label("This is just the contents of the window.");
+
+        if let Some(tid) = self.icons.get(IconName::Min) {
+            ui.add(Image::new(tid, Vec2::new(32.0, 32.0)).bg_fill(egui::Color32::BLACK));
+        }
+
+        // ui.image(self.icons.get(IconName::Min).unwrap(), egui::vec2(32.0, 32.0));
+        // ui.image(self.icons.get(IconName::Close).unwrap(), egui::vec2(32.0, 32.0));
+        // ui.image(self.icons.get(IconName::Dark).unwrap(), egui::vec2(32.0, 32.0));
+
+        ui.label(format!("Total items: {}", self.icons.valid_count()));
     }
 
     /// Render the entire app (including the banner and outlet)
