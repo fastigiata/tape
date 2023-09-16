@@ -20,7 +20,7 @@ pub fn run_tape_app() {
     match eframe::run_native(
         "Tape",
         options,
-        Box::new(|_| Box::new(core::TapeApp::new())),
+        Box::new(|cc| Box::new(core::TapeApp::new(cc))),
     ) {
         Ok(_) => {}
         Err(err) => {
