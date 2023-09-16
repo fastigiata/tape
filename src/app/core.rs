@@ -23,6 +23,16 @@ impl AppRoute {
             AppRoute::About => "About",
         }.to_string()
     }
+
+    pub fn window_size(&self) -> egui::Vec2 {
+        match self {
+            AppRoute::Home => egui::vec2(400.0, 240.0),
+            AppRoute::Record => egui::vec2(800.0, 600.0),
+            AppRoute::Act => egui::vec2(800.0, 600.0),
+            AppRoute::List => egui::vec2(800.0, 600.0),
+            AppRoute::About => egui::vec2(800.0, 600.0),
+        }
+    }
 }
 // endregion
 
@@ -39,35 +49,6 @@ impl TapeApp {
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
         }
-    }
-
-    /// Render the entire app (including the banner and outlet)
-    fn render_app(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let app_frame = egui::Frame {
-            fill: ctx.style().visuals.window_fill(),
-            rounding: APP_BORDER_RADIUS.into(),
-            stroke: ctx.style().visuals.widgets.noninteractive.fg_stroke,
-            outer_margin: 0.5.into(),
-            ..Default::default()
-        };
-
-        CentralPanel::default()
-            .frame(app_frame)
-            .show(ctx, |ui| {
-                let app_rect = ui.max_rect();
-
-                let banner_rect = {
-                    let mut rect = app_rect;
-                    rect.max.y = rect.min.y + APP_BANNER_H;
-                    rect
-                };
-
-                self.render_banner(banner_rect, ui, frame);
-
-                // TODO: render the outlet following the 'app_route'
-                // self.render_outlet();
-                ui.label("This is just the contents of the window.");
-            });
     }
 
     /// Render the banner
@@ -104,6 +85,8 @@ impl TapeApp {
                 ui.add_space(8.0);
                 ui.visuals_mut().button_frame = false;
 
+                // TODO: use icons instead of text
+
                 // close the window
                 if ui.button("X")
                     .on_hover_text("Close the window")
@@ -125,8 +108,40 @@ impl TapeApp {
     }
 
     /// Render the outlet
-    fn render_outlet(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn render_outlet(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         // TODO: render the outlet following the 'app_route'
+
+        ui.label("This is just the contents of the window.");
+    }
+
+    /// Render the entire app (including the banner and outlet)
+    fn render_app(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        // set the window size according to the 'app_route'
+        frame.set_window_size(self.app_route.window_size());
+
+        CentralPanel::default()
+            .frame(egui::Frame {
+                fill: ctx.style().visuals.window_fill(),
+                rounding: APP_BORDER_RADIUS.into(),
+                stroke: ctx.style().visuals.widgets.noninteractive.fg_stroke,
+                outer_margin: 0.5.into(),
+                ..Default::default()
+            })
+            .show(ctx, |ui| {
+                let app_rect = ui.max_rect();
+
+                let banner_rect = {
+                    let mut rect = app_rect;
+                    rect.max.y = rect.min.y + APP_BANNER_H;
+                    rect
+                };
+
+                // render the banner
+                self.render_banner(banner_rect, ui, frame);
+
+                // render the outlet following the 'app_route'
+                self.render_outlet(ui, frame);
+            });
     }
 }
 
