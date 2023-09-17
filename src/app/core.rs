@@ -1,5 +1,5 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, Image, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, Button, CentralPanel, FontId, Id, Image, Sense, Vec2, Visuals};
 use crate::app::icons::{IconName, TapeIcon};
 
 // region Constants
@@ -25,9 +25,10 @@ impl AppRoute {
         }.to_string()
     }
 
-    pub fn window_size(&self) -> egui::Vec2 {
+    pub fn window_size(&self) -> Vec2 {
         match self {
-            AppRoute::Home => egui::vec2(400.0, 240.0),
+            // AppRoute::Home => egui::vec2(400.0, 240.0),
+            AppRoute::Home => egui::vec2(800.0, 600.0),
             AppRoute::Record => egui::vec2(800.0, 600.0),
             AppRoute::Act => egui::vec2(800.0, 600.0),
             AppRoute::List => egui::vec2(800.0, 600.0),
@@ -45,9 +46,9 @@ pub struct TapeApp {
 }
 
 impl TapeApp {
-    pub fn new(cc: &CreationContext) -> TapeApp {
+    pub fn new(_cc: &CreationContext) -> TapeApp {
         TapeApp {
-            icons: TapeIcon::new(&cc.egui_ctx),
+            icons: TapeIcon::new(),
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
             dark_mode: false,
@@ -96,6 +97,12 @@ impl TapeApp {
                     .clicked() {
                     frame.close();
                 }
+                // if self.icons.get(IconName::Close)
+                //     .show_size(ui, egui::vec2(24.0, 24.0))
+                //     .on_hover_text("Close the window")
+                //     .clicked() {
+                //     frame.close();
+                // }
 
                 // minimize the window
                 if ui.button("·")
@@ -116,15 +123,15 @@ impl TapeApp {
 
         ui.label("This is just the contents of the window.");
 
-        if let Some(tid) = self.icons.get(IconName::Min) {
-            ui.add(Image::new(tid, Vec2::new(32.0, 32.0)).bg_fill(egui::Color32::BLACK));
+        // if let Some(img) = self.icons.get(IconName::Min) {
+        //     img.show_size(ui, egui::vec2(32.0, 32.0));
+        // }
+        let p = self.icons.get(IconName::Close).texture_id(ui.ctx());
+        if ui.image(p, egui::vec2(32.0, 32.0)).clicked() {
+            println!("clicked!");
         }
 
-        // ui.image(self.icons.get(IconName::Min).unwrap(), egui::vec2(32.0, 32.0));
-        // ui.image(self.icons.get(IconName::Close).unwrap(), egui::vec2(32.0, 32.0));
-        // ui.image(self.icons.get(IconName::Dark).unwrap(), egui::vec2(32.0, 32.0));
-
-        ui.label(format!("Total items: {}", self.icons.valid_count()));
+        ui.label(format!("Total items: {}", self.icons.count()));
     }
 
     /// Render the entire app (including the banner and outlet)
