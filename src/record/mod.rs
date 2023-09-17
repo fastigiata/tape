@@ -164,12 +164,11 @@ impl Recorder {
                 });
 
                 // mousemove listener
-                let tmp1 = DeviceState::new();
-                let tmp2 = Arc::clone(&script);
+                let tmp1 = Arc::clone(&script);
                 _guard_mm = ds.on_mouse_move(move |pos| {
-                    tmp2.lock().unwrap().add_mouse_action(
+                    tmp1.lock().unwrap().add_mouse_action(
                         ActionType::Move, 0,
-                        tmp1.get_mouse().coords,
+                        *pos,
                     );
                 });
             }
@@ -198,7 +197,7 @@ mod unit_test {
     #[test]
     fn record() {
         let recorder = Recorder::new(RecordType::Mouse, Some(CanonicalKey::Escape));
-        recorder.work();
+        recorder.record();
 
         thread::sleep(Duration::from_secs(5));
 
