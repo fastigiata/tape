@@ -1,5 +1,5 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, Button, CentralPanel, FontId, Id, Image, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Sense, Vec2, Visuals};
 use crate::app::icons::{IconName, TapeIcon};
 
 // region Constants
@@ -89,25 +89,19 @@ impl TapeApp {
                 ui.add_space(8.0);
                 ui.visuals_mut().button_frame = false;
 
-                // TODO: use icons instead of text
-
                 // close the window
-                if ui.button("X")
-                    .on_hover_text("Close the window")
-                    .clicked() {
+                if ui.add(ImageButton::new(
+                    self.icons.get(IconName::Close).texture_id(ui.ctx()),
+                    egui::vec2(24.0, 24.0),
+                )).on_hover_text("Close the window").clicked() {
                     frame.close();
                 }
-                // if self.icons.get(IconName::Close)
-                //     .show_size(ui, egui::vec2(24.0, 24.0))
-                //     .on_hover_text("Close the window")
-                //     .clicked() {
-                //     frame.close();
-                // }
 
                 // minimize the window
-                if ui.button("·")
-                    .on_hover_text("Minimize the window")
-                    .clicked() {
+                if ui.add(ImageButton::new(
+                    self.icons.get(IconName::Min).texture_id(ui.ctx()),
+                    egui::vec2(24.0, 4.0),
+                )).on_hover_text("Close the window").clicked() {
                     frame.set_minimized(true);
                 }
 
@@ -126,10 +120,8 @@ impl TapeApp {
         // if let Some(img) = self.icons.get(IconName::Min) {
         //     img.show_size(ui, egui::vec2(32.0, 32.0));
         // }
-        let p = self.icons.get(IconName::Close).texture_id(ui.ctx());
-        if ui.image(p, egui::vec2(32.0, 32.0)).clicked() {
-            println!("clicked!");
-        }
+        let p = self.icons.get(IconName::Min).texture_id(ui.ctx());
+        ui.image(p, egui::vec2(24.0, 4.0));
 
         ui.label(format!("Total items: {}", self.icons.count()));
     }
