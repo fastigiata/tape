@@ -1,7 +1,7 @@
 use eframe::{CreationContext, egui, glow};
 use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
 use crate::app::icons::{IconName, TapeIcon};
-use crate::app::pages::{home_renderer, PageRenderer};
+use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
 // region Constants
 const APP_BORDER_RADIUS: f32 = 8.0;
@@ -133,6 +133,7 @@ impl TapeApp {
         // get the renderer following the 'app_route'
         let renderer: PageRenderer = match self.app_route {
             AppRoute::Home => home_renderer,
+            AppRoute::About => about_renderer,
             // TODO: renderer for other routes
             _ => home_renderer,
         };

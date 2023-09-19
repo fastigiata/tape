@@ -1,4 +1,5 @@
 mod home;
+mod about;
 
 use eframe::egui::{Rect, Ui};
 use crate::app::core::TapeApp;
@@ -7,3 +8,4 @@ use crate::app::core::TapeApp;
 pub type PageRenderer = fn(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut eframe::Frame);
 
 pub use home::home_renderer;
+pub use about::about_renderer;
