@@ -42,7 +42,6 @@ pub struct TapeApp {
     icons: TapeIcon,
     app_state: AppState,
     app_route: AppRoute,
-    dark_mode: bool,
 }
 
 impl TapeApp {
@@ -51,7 +50,6 @@ impl TapeApp {
             icons: TapeIcon::new(),
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
-            dark_mode: false,
         }
     }
 
