@@ -1,6 +1,7 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
 use crate::app::icons::{IconName, TapeIcon};
+use crate::app::pages::{home_renderer, PageRenderer};
 
 // region Constants
 const APP_BORDER_RADIUS: f32 = 8.0;
@@ -27,8 +28,7 @@ impl AppRoute {
 
     pub fn window_size(&self) -> Vec2 {
         match self {
-            // AppRoute::Home => egui::vec2(400.0, 240.0),
-            AppRoute::Home => egui::vec2(800.0, 600.0),
+            AppRoute::Home => egui::vec2(400.0, 240.0),
             AppRoute::Record => egui::vec2(800.0, 600.0),
             AppRoute::Act => egui::vec2(800.0, 600.0),
             AppRoute::List => egui::vec2(800.0, 600.0),
@@ -53,8 +53,13 @@ impl TapeApp {
         }
     }
 
+    /// Set the route of the app
+    pub fn set_app_route(&mut self, route: AppRoute) {
+        self.app_route = route;
+    }
+
     /// Render the banner
-    fn render_banner(&self, rect: eframe::epaint::Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+    fn render_banner(&self, rect: Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         let painter = ui.painter();
 
         // paint the title
@@ -124,10 +129,16 @@ impl TapeApp {
     }
 
     /// Render the outlet
-    fn render_outlet(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
-        // TODO: render the outlet following the 'app_route'
+    fn render_outlet(&mut self, rect: Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+        // get the renderer following the 'app_route'
+        let renderer: PageRenderer = match self.app_route {
+            AppRoute::Home => home_renderer,
+            // TODO: renderer for other routes
+            _ => home_renderer,
+        };
 
-        ui.label("This is just the contents of the window.");
+        // render the outlet following the 'app_route'
+        renderer(self, rect, ui, frame);
     }
 
     /// Render the entire app (including the banner and outlet)
@@ -146,17 +157,24 @@ impl TapeApp {
             .show(ctx, |ui| {
                 let app_rect = ui.max_rect();
 
-                let banner_rect = {
-                    let mut rect = app_rect;
-                    rect.max.y = rect.min.y + APP_BANNER_H;
-                    rect
-                };
-
                 // render the banner
-                self.render_banner(banner_rect, ui, frame);
+                self.render_banner(
+                    {
+                        let mut rect = app_rect;
+                        rect.max.y = rect.min.y + APP_BANNER_H;
+                        rect
+                    },
+                    ui, frame,
+                );
 
                 // render the outlet following the 'app_route'
-                self.render_outlet(ui, frame);
+                self.render_outlet(
+                    {
+                        let mut rect = app_rect;
+                        rect.min.y += APP_BANNER_H;
+                        rect
+                    }, ui, frame,
+                );
             });
     }
 }
