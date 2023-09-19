@@ -92,7 +92,7 @@ impl TapeApp {
                 // close the window
                 if ui.add(ImageButton::new(
                     self.icons.get(IconName::Close).texture_id(ui.ctx()),
-                    egui::vec2(24.0, 24.0),
+                    egui::vec2(16.0, 16.0),
                 )).on_hover_text("Close the window").clicked() {
                     frame.close();
                 }
@@ -100,13 +100,27 @@ impl TapeApp {
                 // minimize the window
                 if ui.add(ImageButton::new(
                     self.icons.get(IconName::Min).texture_id(ui.ctx()),
-                    egui::vec2(24.0, 4.0),
-                )).on_hover_text("Close the window").clicked() {
+                    egui::vec2(16.0, 16.0),
+                )).on_hover_text("Minimize the window").clicked() {
                     frame.set_minimized(true);
                 }
 
                 // switch between dark & light mode
-                egui::widgets::global_dark_light_mode_switch(ui);
+                if ui.style().visuals.dark_mode {
+                    if ui.add(ImageButton::new(
+                        self.icons.get(IconName::Light).texture_id(ui.ctx()),
+                        egui::vec2(16.0, 16.0),
+                    )).on_hover_text("Switch to light mode").clicked() {
+                        ui.ctx().set_visuals(Visuals::light());
+                    }
+                } else {
+                    if ui.add(ImageButton::new(
+                        self.icons.get(IconName::Dark).texture_id(ui.ctx()),
+                        egui::vec2(16.0, 16.0),
+                    )).on_hover_text("Switch to dark mode").clicked() {
+                        ui.ctx().set_visuals(Visuals::dark());
+                    }
+                }
             });
         });
     }
@@ -116,14 +130,6 @@ impl TapeApp {
         // TODO: render the outlet following the 'app_route'
 
         ui.label("This is just the contents of the window.");
-
-        // if let Some(img) = self.icons.get(IconName::Min) {
-        //     img.show_size(ui, egui::vec2(32.0, 32.0));
-        // }
-        let p = self.icons.get(IconName::Min).texture_id(ui.ctx());
-        ui.image(p, egui::vec2(24.0, 4.0));
-
-        ui.label(format!("Total items: {}", self.icons.count()));
     }
 
     /// Render the entire app (including the banner and outlet)
