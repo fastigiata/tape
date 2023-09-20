@@ -2,9 +2,8 @@ use eframe::{egui, IconData};
 
 mod core;
 mod pages;
-mod components;
-mod icon;
-mod font;
+mod prefabs;
+mod misc;
 
 pub fn run_tape_app() {
     let options = eframe::NativeOptions {
