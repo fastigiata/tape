@@ -1,5 +1,6 @@
 use eframe::{CreationContext, egui, glow};
 use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
+use crate::app::font::prepare_font;
 use crate::app::icon::{IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
@@ -45,8 +46,8 @@ pub struct TapeApp {
 }
 
 impl TapeApp {
-    pub fn new(_cc: &CreationContext) -> TapeApp {
-
+    pub fn new(cc: &CreationContext) -> TapeApp {
+        prepare_font(&cc.egui_ctx);
 
         TapeApp {
             icons: TapeIcon::new(),

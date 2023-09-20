@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use eframe::egui::{Context, TextureId, TextureOptions};
+use eframe::egui::{Context, TextureId};
 use egui_extras::RetainedImage;
 
 const ICON_MIN: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 10H2C0.89543 10 0 10.8954 0 12C0 13.1046 0.89543 14 2 14H22C23.1046 14 24 13.1046 24 12C24 10.8954 23.1046 10 22 10Z" fill="#FA923F"/></svg>"##;
