@@ -1,6 +1,6 @@
 use eframe::{CreationContext, egui, glow};
 use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
-use crate::app::icons::{IconName, TapeIcon};
+use crate::app::icon::{IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
 // region Constants
@@ -46,6 +46,8 @@ pub struct TapeApp {
 
 impl TapeApp {
     pub fn new(_cc: &CreationContext) -> TapeApp {
+
+
         TapeApp {
             icons: TapeIcon::new(),
             app_state: AppState::Idle,

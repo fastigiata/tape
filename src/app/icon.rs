@@ -32,7 +32,7 @@ pub struct TapeIcon {
 
 impl TapeIcon {
     pub fn new() -> TapeIcon {
-        TapeIcon { icons: icon_loader() }
+        TapeIcon { icons: prepare_icon() }
     }
 
     pub fn get(&self, name: IconName) -> &RetainedImage {
@@ -52,7 +52,7 @@ impl TapeIcon {
     }
 }
 
-fn icon_loader() -> HashMap<IconName, RetainedImage> {
+fn prepare_icon() -> HashMap<IconName, RetainedImage> {
     let mut icons: HashMap<IconName, RetainedImage> = HashMap::new();
 
     let icon_raw = vec![
