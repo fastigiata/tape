@@ -14,24 +14,32 @@ impl TapeColor {
 // endregion
 
 // region -- font selection
-const FONT_MA_SHAN_ZHENG: &'static [u8] = include_bytes!("../assets/fonts/MaShanZheng-Regular.ttf");
+const FONT_MASHANZHENG: &'static [u8] = include_bytes!("../assets/fonts/MaShanZheng-Regular.ttf");
+const FONT_MOOLI: &'static [u8] = include_bytes!("../assets/fonts/Mooli-Regular.ttf");
 
 pub fn prepare_font(ctx: &Context) {
     // default fonts (from egui)
     let mut fonts = FontDefinitions::default();
 
-    // add the font
+    // add the font -- MaShanZheng
     fonts.font_data.insert(
         "MaShanZheng".to_string(),
-        FontData::from_static(FONT_MA_SHAN_ZHENG),
+        FontData::from_static(FONT_MASHANZHENG),
+    );
+    fonts.families.insert(
+        FontFamily::Name("MaShanZheng".into()),
+        vec!["MaShanZheng".to_string()],
     );
 
-    // put the font in the first place
-    fonts
-        .families
-        .entry(FontFamily::Proportional)
-        .or_default()
-        .insert(0, "MaShanZheng".to_string());
+    // add the font -- Mooli
+    fonts.font_data.insert(
+        "Mooli".to_string(),
+        FontData::from_static(FONT_MOOLI),
+    );
+    fonts.families.insert(
+        FontFamily::Name("Mooli".into()),
+        vec!["Mooli".to_string()],
+    );
 
     // set the fonts
     ctx.set_fonts(fonts);
