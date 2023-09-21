@@ -21,7 +21,7 @@ impl AppRoute {
             AppRoute::Home => "Tape",
             AppRoute::Record => "录制",
             AppRoute::Act => "播放",
-            AppRoute::History => "记录",
+            AppRoute::History => "历史",
             AppRoute::About => "关于",
         }.to_string()
     }
