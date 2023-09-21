@@ -18,7 +18,7 @@ pub fn home_renderer(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut efr
         }
 
         if ui.button("Go to List").clicked() {
-            app.set_app_route(AppRoute::List);
+            app.set_app_route(AppRoute::History);
         }
 
         if ui.button("Go to About").clicked() {
