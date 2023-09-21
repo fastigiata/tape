@@ -1,5 +1,5 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
 use crate::app::misc::{prepare_font, IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
@@ -13,16 +13,16 @@ const APP_BANNER_H: f32 = 32.0;
 pub enum AppState { Idle, Record, Act }
 
 #[derive(Debug, PartialEq)]
-pub enum AppRoute { Home, Record, Act, List, About }
+pub enum AppRoute { Home, Record, Act, History, About }
 
 impl AppRoute {
     pub fn name(&self) -> String {
         match self {
-            AppRoute::Home => "Home",
-            AppRoute::Record => "Record",
-            AppRoute::Act => "Act",
-            AppRoute::List => "List",
-            AppRoute::About => "About",
+            AppRoute::Home => "Tape",
+            AppRoute::Record => "录制",
+            AppRoute::Act => "播放",
+            AppRoute::History => "记录",
+            AppRoute::About => "关于",
         }.to_string()
     }
 
@@ -31,8 +31,8 @@ impl AppRoute {
             AppRoute::Home => egui::vec2(400.0, 240.0),
             AppRoute::Record => egui::vec2(800.0, 600.0),
             AppRoute::Act => egui::vec2(800.0, 600.0),
-            AppRoute::List => egui::vec2(800.0, 600.0),
-            AppRoute::About => egui::vec2(800.0, 600.0),
+            AppRoute::History => egui::vec2(800.0, 600.0),
+            AppRoute::About => egui::vec2(400.0, 600.0),
         }
     }
 }
@@ -69,7 +69,7 @@ impl TapeApp {
             rect.center(),
             Align2::CENTER_CENTER,
             self.app_route.name(),
-            FontId::proportional(20.0),
+            FontId::new(20.0, FontFamily::Name("MaShanZheng".into())),
             ui.style().visuals.text_color(),
         );
 
