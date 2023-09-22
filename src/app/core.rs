@@ -98,7 +98,7 @@ impl TapeApp {
                 // close the window
                 if ui.add(ImageButton::new(
                     self.icons.get(IconName::Close).texture_id(ui.ctx()),
-                    egui::vec2(16.0, 16.0),
+                    egui::vec2(12.0, 12.0),
                 )).on_hover_text("Close the window").clicked() {
                     frame.close();
                 }
@@ -106,7 +106,7 @@ impl TapeApp {
                 // minimize the window
                 if ui.add(ImageButton::new(
                     self.icons.get(IconName::Min).texture_id(ui.ctx()),
-                    egui::vec2(16.0, 16.0),
+                    egui::vec2(12.0, 12.0),
                 )).on_hover_text("Minimize the window").clicked() {
                     frame.set_minimized(true);
                 }
@@ -133,7 +133,7 @@ impl TapeApp {
                     // close the window
                     if ui.add(ImageButton::new(
                         self.icons.get(IconName::Back).texture_id(ui.ctx()),
-                        egui::vec2(16.0, 16.0),
+                        egui::vec2(12.0, 12.0),
                     )).on_hover_text("Back to home").clicked() {
                         self.set_app_route(AppRoute::Home);
                     }
