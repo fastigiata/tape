@@ -8,7 +8,7 @@ const TAPE_DESC_ZH: &'static str = "Tape 是一个用于记录鼠标和/或键�
 const TAPE_DESC_EN: &'static str = "Tape is an application for recording mouse and/or keyboard actions, which can generate a recording file for later playback.";
 const TAPE_LICENSE_URL: &'static str = "https://github.com/lopo12123/tape/blob/master/LICENSE";
 
-pub fn about_renderer(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut eframe::Frame) {
+pub fn about_renderer(_app: &mut TapeApp, rect: Rect, ui: &mut Ui, _frame: &mut eframe::Frame) {
     ui.allocate_ui_at_rect(
         {
             let mut v = rect;
