@@ -1,9 +1,10 @@
-use eframe::{egui, IconData};
+use eframe::{egui, IconData, Theme};
 
 mod core;
-mod pages;
-mod prefabs;
+mod helper;
 mod misc;
+mod pages;
+mod prefab;
 
 pub fn run_tape_app() {
     let options = eframe::NativeOptions {
@@ -13,6 +14,8 @@ pub fn run_tape_app() {
         resizable: false,
         decorated: false,
         transparent: true,
+        follow_system_theme: false,
+        default_theme: Theme::Dark,
         initial_window_size: Some(egui::vec2(400.0, 200.0)),
         ..Default::default()
     };
@@ -28,10 +31,4 @@ pub fn run_tape_app() {
             println!("Error: {}", err);
         }
     };
-}
-
-#[cfg(test)]
-mod unit_test {
-    #[test]
-    fn run() {}
 }
