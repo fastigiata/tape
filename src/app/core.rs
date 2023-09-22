@@ -79,7 +79,7 @@ impl TapeApp {
                 rect.left_bottom() + egui::vec2(1.0, 0.0),
                 rect.right_bottom() + egui::vec2(-1.0, 0.0),
             ],
-            ui.visuals().widgets.noninteractive.bg_stroke,
+            ui.visuals().widgets.noninteractive.fg_stroke,
         );
 
         // interact with the banner -- drag to move the window
