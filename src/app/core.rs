@@ -19,10 +19,10 @@ impl AppRoute {
     pub fn name(&self) -> String {
         match self {
             AppRoute::Home => "Tape",
-            AppRoute::Record => "录制",
-            AppRoute::Act => "播放",
-            AppRoute::History => "历史",
-            AppRoute::About => "关于",
+            AppRoute::Record => "Record",
+            AppRoute::Act => "Act",
+            AppRoute::History => "History",
+            AppRoute::About => "About",
         }.to_string()
     }
 
@@ -32,7 +32,7 @@ impl AppRoute {
             AppRoute::Record => egui::vec2(800.0, 600.0),
             AppRoute::Act => egui::vec2(800.0, 600.0),
             AppRoute::History => egui::vec2(800.0, 600.0),
-            AppRoute::About => egui::vec2(400.0, 600.0),
+            AppRoute::About => egui::vec2(400.0, 420.0),
         }
     }
 }
@@ -61,7 +61,7 @@ impl TapeApp {
     }
 
     /// Render the banner
-    fn render_banner(&self, rect: Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+    fn render_banner(&mut self, rect: Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         let painter = ui.painter();
 
         // paint the title
@@ -90,9 +90,10 @@ impl TapeApp {
 
         // operate the banner -- dark/light mode, minimize, close
         ui.allocate_ui_at_rect(rect, |ui| {
+            // render the buttons on the right side
             ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
-                ui.add_space(8.0);
                 ui.visuals_mut().button_frame = false;
+                ui.add_space(8.0);
 
                 // close the window
                 if ui.add(ImageButton::new(
@@ -111,19 +112,30 @@ impl TapeApp {
                 }
 
                 // switch between dark & light mode
-                if ui.style().visuals.dark_mode {
+                // if ui.style().visuals.dark_mode {
+                //     if ui.add(ImageButton::new(
+                //         self.icons.get(IconName::Light).texture_id(ui.ctx()),
+                //         egui::vec2(16.0, 16.0),
+                //     )).on_hover_text("Switch to light mode").clicked() {
+                //         ui.ctx().set_visuals(Visuals::light());
+                //     }
+                // } else {
+                //     if ui.add(ImageButton::new(
+                //         self.icons.get(IconName::Dark).texture_id(ui.ctx()),
+                //         egui::vec2(16.0, 16.0),
+                //     )).on_hover_text("Switch to dark mode").clicked() {
+                //         ui.ctx().set_visuals(Visuals::dark());
+                //     }
+                // }
+
+                // render the 'back' button if the 'app_route' is not 'Home'
+                if self.app_route != AppRoute::Home {
+                    // close the window
                     if ui.add(ImageButton::new(
-                        self.icons.get(IconName::Light).texture_id(ui.ctx()),
+                        self.icons.get(IconName::Back).texture_id(ui.ctx()),
                         egui::vec2(16.0, 16.0),
-                    )).on_hover_text("Switch to light mode").clicked() {
-                        ui.ctx().set_visuals(Visuals::light());
-                    }
-                } else {
-                    if ui.add(ImageButton::new(
-                        self.icons.get(IconName::Dark).texture_id(ui.ctx()),
-                        egui::vec2(16.0, 16.0),
-                    )).on_hover_text("Switch to dark mode").clicked() {
-                        ui.ctx().set_visuals(Visuals::dark());
+                    )).on_hover_text("Back to home").clicked() {
+                        self.set_app_route(AppRoute::Home);
                     }
                 }
             });
