@@ -6,6 +6,20 @@ pub mod declaration;
 pub mod convert_enigo;
 pub mod convert_dq;
 
+/// The type of a action to be recorded/acted
+#[derive(Debug, Clone, PartialEq)]
+pub enum ActionSense { Keyboard, Mouse, Both }
+
+impl ActionSense {
+    pub fn with_keyboard(&self) -> bool {
+        self != &ActionSense::Mouse
+    }
+
+    pub fn with_mouse(&self) -> bool {
+        self != &ActionSense::Keyboard
+    }
+}
+
 /// An **action** is a single event that can be performed by an [actor](../act/struct.Actor.html)
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Action {
@@ -110,7 +124,6 @@ impl Script {
         }
     }
 }
-
 
 #[cfg(test)]
 mod unit_test {
