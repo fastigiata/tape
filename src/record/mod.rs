@@ -3,7 +3,7 @@ use std::thread;
 use std::time::Duration;
 use device_query::{DeviceEvents, DeviceQuery, DeviceState, Keycode, MouseButton};
 use crate::canonicalize::declaration::{ActionType, CanonicalKey};
-use crate::canonicalize::{Action, Script};
+use crate::canonicalize::{Action, ActionSense, Script};
 
 // Collection of methods of Script on 'record'
 impl Script {
@@ -33,24 +33,10 @@ impl Script {
 /// The gap between two loops
 const LOOP_GAP: u64 = 100;
 
-/// The type of a record
-#[derive(Debug, Clone, PartialEq)]
-pub enum RecordType { Keyboard, Mouse, Both }
-
-impl RecordType {
-    pub fn with_keyboard(&self) -> bool {
-        self != &RecordType::Mouse
-    }
-
-    pub fn with_mouse(&self) -> bool {
-        self != &RecordType::Keyboard
-    }
-}
-
 /// A **recorder** is a person who records your [action](../canonicalize/struct.Action.html)s into a [script](../canonicalize/struct.Script.html) for an [actor](../act/struct.Actor.html) to perform
 pub struct Recorder {
     /// The type of the record
-    record_type: RecordType,
+    record_type: ActionSense,
     /// The key that stops the recording
     stop_signal: Option<CanonicalKey>,
 
@@ -62,7 +48,7 @@ pub struct Recorder {
 
 impl Recorder {
     /// Create a new recorder
-    pub fn new(record_type: RecordType, stop_signal: Option<CanonicalKey>) -> Self {
+    pub fn new(record_type: ActionSense, stop_signal: Option<CanonicalKey>) -> Self {
         Recorder {
             record_type,
             stop_signal,
@@ -196,7 +182,7 @@ mod unit_test {
 
     #[test]
     fn record() {
-        let recorder = Recorder::new(RecordType::Mouse, Some(CanonicalKey::Escape));
+        let recorder = Recorder::new(ActionSense::Mouse, Some(CanonicalKey::Escape));
         recorder.record();
 
         thread::sleep(Duration::from_secs(5));
