@@ -35,7 +35,7 @@ const LOOP_GAP: u64 = 100;
 
 /// A **recorder** is a person who records your [action](../canonicalize/struct.Action.html)s into a [script](../canonicalize/struct.Script.html) for an [actor](../act/struct.Actor.html) to perform
 pub struct Recorder {
-    /// The type of the record
+    /// The type of the action to be recorded
     record_type: ActionSense,
     /// The key that stops the recording
     stop_signal: Option<CanonicalKey>,
