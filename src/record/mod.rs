@@ -39,9 +39,8 @@ pub struct Recorder {
     record_type: ActionSense,
     /// The key that stops the recording
     stop_signal: Option<CanonicalKey>,
-
-    /// Whether the recorder is recording
-    is_working: Arc<Mutex<bool>>,
+    /// A flag indicating whether the recorder is working
+    mission_guard: Arc<Mutex<bool>>,
     /// The script being recorded
     script: Arc<Mutex<Script>>,
 }
@@ -52,7 +51,7 @@ impl Recorder {
         Recorder {
             record_type,
             stop_signal,
-            is_working: Arc::new(Mutex::new(false)),
+            mission_guard: Arc::new(Mutex::new(false)),
             script: Arc::new(Mutex::new(Script::empty())),
         }
     }
@@ -62,11 +61,11 @@ impl Recorder {
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
     pub fn record(&self) {
         // set the working flag
-        *self.is_working.lock().unwrap() = true;
+        *self.mission_guard.lock().unwrap() = true;
 
         let record_type = self.record_type.clone();
         let stop_signal = self.stop_signal.clone();
-        let is_working = Arc::clone(&self.is_working);
+        let mission_guard = Arc::clone(&self.mission_guard);
         let script = Arc::clone(&self.script);
 
         // start the recording thread
@@ -84,7 +83,7 @@ impl Recorder {
             // keyboard events
             if record_type.with_keyboard() {
                 // keydown listener
-                let tmp1 = Arc::clone(&is_working);
+                let tmp1 = Arc::clone(&mission_guard);
                 let tmp2 = stop_signal.clone();
                 let tmp3 = Arc::clone(&script);
                 _guard_kd = ds.on_key_down(move |key| {
@@ -99,7 +98,7 @@ impl Recorder {
                 });
 
                 // keyup listener
-                let tmp1 = Arc::clone(&is_working);
+                let tmp1 = Arc::clone(&mission_guard);
                 let tmp2 = stop_signal.clone();
                 let tmp3 = Arc::clone(&script);
                 _guard_ku = ds.on_key_up(move |key| {
@@ -116,7 +115,7 @@ impl Recorder {
                 // if the recorder does not record keyboard events,
                 // we still need to listen to the stop signal
                 // keydown listener
-                let tmp1 = Arc::clone(&is_working);
+                let tmp1 = Arc::clone(&mission_guard);
                 let tmp2 = stop_signal.clone();
                 _guard_ext = ds.on_key_down(move |key| {
                     // if the stop signal is pressed, stop the recording
@@ -160,7 +159,7 @@ impl Recorder {
             }
 
             // wait for the stop signal
-            while *is_working.lock().unwrap() {
+            while *mission_guard.lock().unwrap() {
                 thread::sleep(Duration::from_millis(LOOP_GAP));
             };
         });
@@ -169,7 +168,7 @@ impl Recorder {
     /// Finish recording and return the script
     pub fn finish(&self) -> Script {
         // set the working flag to false
-        *self.is_working.lock().unwrap() = false;
+        *self.mission_guard.lock().unwrap() = false;
 
         // return the script
         self.script.lock().unwrap().clone()
