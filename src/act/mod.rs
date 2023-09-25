@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 use crate::canonicalize::{Action, ActionSense, Script};
-use crate::canonicalize::declaration::{CanonicalAction, CanonicalKey};
+use crate::canonicalize::declaration::{CanonicalKey};
 
 impl Script {
     /// Get the next action to be performed
@@ -15,38 +15,9 @@ impl Script {
         None
     }
 
-    /// Get the next keyboard action to be performed
-    pub fn next_keyboard_action(&mut self) -> Option<Action> {
-        let total: usize = self.actions.len();
-
-        while self.cursor < total {
-            let action = &self.actions[self.cursor];
-            self.cursor += 1;
-
-            match action.action {
-                CanonicalAction::Keyboard(..) => return Some(action.clone()),
-                _ => continue,
-            }
-        }
-
-        None
-    }
-
-    /// Get the next mouse action to be performed
-    pub fn next_mouse_action(&mut self) -> Option<Action> {
-        let total: usize = self.actions.len();
-
-        while self.cursor < total {
-            let action = &self.actions[self.cursor];
-            self.cursor += 1;
-
-            match action.action {
-                CanonicalAction::Mouse(..) => return Some(action.clone()),
-                _ => continue,
-            }
-        }
-
-        None
+    /// Reset the cursor to the beginning of the script
+    pub fn reset_cursor(&mut self) {
+        self.cursor = 0;
     }
 }
 
@@ -100,7 +71,28 @@ mod unit_test {
     use std::thread;
     use std::thread::Thread;
     use std::time::Duration;
+    use device_query::Keycode;
     use enigo::{Key, KeyboardControllable, MouseButton, MouseControllable};
+    use crate::canonicalize::declaration::ActionType;
+    use crate::canonicalize::Script;
+
+    #[test]
+    fn next_action_test() {
+        let mut mv = Script::empty();
+        thread::sleep(Duration::from_secs(1));
+        mv.add_keyboard_action(ActionType::Press, Keycode::A);
+        thread::sleep(Duration::from_secs(2));
+        mv.add_keyboard_action(ActionType::Release, Keycode::K);
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Press, 1, (50, 50));
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Release, 0, (50, 50));
+
+        while let Some(action) = mv.next_action() {
+            println!("next action is [{:?}]", action);
+            thread::sleep(Duration::from_secs(1));
+        }
+    }
 
     #[test]
     fn enigo_key() {
