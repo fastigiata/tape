@@ -120,6 +120,27 @@ impl Script {
         self.name = name;
     }
 
+    /// Filter the script to keep only the specified type of actions
+    pub fn filter(&mut self, sense: ActionSense) {
+        self.actions = self.actions.iter().filter(|action| {
+            match sense {
+                ActionSense::Keyboard => {
+                    match action.action {
+                        CanonicalAction::Keyboard(..) => true,
+                        _ => false,
+                    }
+                }
+                ActionSense::Mouse => {
+                    match action.action {
+                        CanonicalAction::Mouse(..) => true,
+                        _ => false,
+                    }
+                }
+                ActionSense::Both => true,
+            }
+        }).cloned().collect();
+    }
+
     /// Publish the script as text
     pub fn publish(&self) -> Result<String, String> {
         match self.self_check() {
@@ -158,5 +179,22 @@ mod unit_test {
             }
             Err(e) => println!("err! {}", e),
         }
+    }
+
+    #[test]
+    fn script_filter() {
+        let mut mv = Script::empty();
+        thread::sleep(Duration::from_secs(1));
+        mv.add_keyboard_action(ActionType::Press, Keycode::A);
+        thread::sleep(Duration::from_secs(2));
+        mv.add_keyboard_action(ActionType::Release, Keycode::K);
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Press, 1, (50, 50));
+        thread::sleep(Duration::from_secs(1));
+        mv.add_mouse_action(ActionType::Release, 0, (50, 50));
+
+        mv.filter(ActionSense::Keyboard);
+
+        println!("{:?}", mv);
     }
 }
