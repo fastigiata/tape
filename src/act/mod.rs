@@ -46,7 +46,38 @@ impl Actor {
 
     /// Interrupt the actor from acting (it will do nothing if the actor is not acting)
     pub fn finish(&mut self) {
-        /// set the working flag to false
+        // set the working flag to false
         *self.mission_guard.lock().unwrap() = false;
+    }
+}
+
+#[cfg(test)]
+mod unit_test {
+    use std::thread;
+    use std::thread::Thread;
+    use std::time::Duration;
+    use enigo::{Key, KeyboardControllable, MouseButton, MouseControllable};
+
+    #[test]
+    fn enigo_key() {
+        // sleep 3 seconds for the user to prepare
+        thread::sleep(Duration::from_secs(3));
+
+        let mut actor = enigo::Enigo::new();
+        actor.key_click(Key::A);
+        actor.key_click(Key::B);
+        actor.key_click(Key::C);
+    }
+
+    #[test]
+    fn enigo_mouse() {
+        // sleep 3 seconds for the user to prepare
+        thread::sleep(Duration::from_secs(3));
+
+        let mut actor = enigo::Enigo::new();
+        actor.mouse_click(MouseButton::Right);
+        actor.mouse_move_relative(-30, -30);
+        thread::sleep(Duration::from_secs(2));
+        actor.mouse_click(MouseButton::Left);
     }
 }
