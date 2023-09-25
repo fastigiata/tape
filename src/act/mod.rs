@@ -1,9 +1,53 @@
 use std::sync::{Arc, Mutex};
-use crate::canonicalize::{ActionSense, Script};
-use crate::canonicalize::declaration::CanonicalKey;
+use crate::canonicalize::{Action, ActionSense, Script};
+use crate::canonicalize::declaration::{CanonicalAction, CanonicalKey};
 
 impl Script {
-    // TODO: 'next_action' implementation
+    /// Get the next action to be performed
+    pub fn next_action(&mut self) -> Option<Action> {
+        let total: usize = self.actions.len();
+        while self.cursor < total {
+            let action = self.actions[self.cursor].clone();
+            self.cursor += 1;
+            return Some(action);
+        }
+
+        None
+    }
+
+    /// Get the next keyboard action to be performed
+    pub fn next_keyboard_action(&mut self) -> Option<Action> {
+        let total: usize = self.actions.len();
+
+        while self.cursor < total {
+            let action = &self.actions[self.cursor];
+            self.cursor += 1;
+
+            match action.action {
+                CanonicalAction::Keyboard(..) => return Some(action.clone()),
+                _ => continue,
+            }
+        }
+
+        None
+    }
+
+    /// Get the next mouse action to be performed
+    pub fn next_mouse_action(&mut self) -> Option<Action> {
+        let total: usize = self.actions.len();
+
+        while self.cursor < total {
+            let action = &self.actions[self.cursor];
+            self.cursor += 1;
+
+            match action.action {
+                CanonicalAction::Mouse(..) => return Some(action.clone()),
+                _ => continue,
+            }
+        }
+
+        None
+    }
 }
 
 /// An **actor** is a person who performs a [script](../canonicalize/struct.Script.html)  of [action](../act/struct.Action.html)s recorded by a [recorder](../record/struct.Recorder.html)

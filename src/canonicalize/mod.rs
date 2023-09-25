@@ -54,7 +54,7 @@ impl Action {
 pub struct Script {
     /// The cursor of the action to be performed.
     #[serde(skip)]
-    cursor: usize,
+    pub cursor: usize,
     /// The name of the script, default to the timestamp of creation
     pub name: String,
     /// The timestamp of creation of the script
