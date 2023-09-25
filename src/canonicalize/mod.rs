@@ -52,6 +52,9 @@ impl Action {
 /// A **script** is a sequence of [action](struct.Action.html)s recorded by a [recorder](../rec/struct.Recorder.html) for an [actor](../act/struct.Actor.html) to perform
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Script {
+    /// The cursor of the action to be performed.
+    #[serde(skip)]
+    cursor: usize,
     /// The name of the script, default to the timestamp of creation
     pub name: String,
     /// The timestamp of creation of the script
@@ -89,6 +92,7 @@ impl Script {
     pub fn empty() -> Script {
         let t = Utc::now();
         Script {
+            cursor: 0,
             name: t.to_rfc3339(),
             ctime: t.timestamp_millis(),
             duration: 0,
