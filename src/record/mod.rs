@@ -78,7 +78,7 @@ impl Recorder {
             let _guard_md;
             let _guard_mu;
             let _guard_mm;
-            let _guard_ext;
+            let _guard_quit;
 
             // keyboard events
             if record_type.with_keyboard() {
@@ -117,7 +117,7 @@ impl Recorder {
                 // keydown listener
                 let tmp1 = Arc::clone(&mission_guard);
                 let tmp2 = stop_signal.clone();
-                _guard_ext = ds.on_key_down(move |key| {
+                _guard_quit = ds.on_key_down(move |key| {
                     // if the stop signal is pressed, stop the recording
                     if tmp2.is_some_and(|v| &v == key) {
                         *tmp1.lock().unwrap() = false;
@@ -158,8 +158,9 @@ impl Recorder {
                 });
             }
 
-            // wait for the stop signal
+            // do recording until the mission is finished
             while *mission_guard.lock().unwrap() {
+                // sleep for a while to avoid too frequent checking
                 thread::sleep(Duration::from_millis(LOOP_GAP));
             };
         });
