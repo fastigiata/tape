@@ -182,14 +182,14 @@ mod unit_test {
 
     #[test]
     fn record() {
-        let recorder = Recorder::new(ActionSense::Mouse, Some(CanonicalKey::Escape));
+        let recorder = Recorder::new(ActionSense::Keyboard, Some(CanonicalKey::Escape));
         recorder.record();
 
         thread::sleep(Duration::from_secs(5));
 
         match recorder.finish().publish() {
-            Ok(v) => println!("ok! {}", v),
-            Err(e) => println!("err! {}", e),
+            Ok(v) => println!("ok!\n{}", v),
+            Err(e) => println!("err!\n{}", e),
         }
     }
 }
