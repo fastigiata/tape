@@ -141,6 +141,13 @@ impl Script {
         }).cloned().collect();
     }
 
+    /// Convert the script to a filtered one, return a new script
+    pub fn to_filtered(&self, sense: ActionSense) -> Script {
+        let mut copy = self.clone();
+        copy.filter(sense);
+        copy
+    }
+
     /// Publish the script as text
     pub fn publish(&self) -> Result<String, String> {
         match self.self_check() {
