@@ -103,8 +103,8 @@ impl Script {
     /// Load a script from a TOML string.
     /// If the parsing is successful and the self-test passes, the script will be returned,
     /// otherwise an error message will be returned.
-    pub fn load(raw: String) -> Result<Script, String> {
-        match toml::from_str::<Script>(&raw) {
+    pub fn load(raw: &str) -> Result<Script, String> {
+        match toml::from_str::<Script>(raw) {
             Ok(script) => {
                 match script.self_check() {
                     Ok(_) => Ok(script),
