@@ -1,4 +1,5 @@
 use std::sync::{Arc, Mutex};
+use std::thread;
 use crate::canonicalize::{Action, ActionSense, Script};
 use crate::canonicalize::declaration::{CanonicalKey};
 
@@ -21,8 +22,11 @@ impl Script {
     }
 }
 
+/// The gap between two loops
+const LOOP_GAP: u64 = 100;
+
 /// An **actor** is a person who performs a [script](../canonicalize/struct.Script.html)  of [action](../act/struct.Action.html)s recorded by a [recorder](../record/struct.Recorder.html)
-struct Actor {
+pub struct Actor {
     /// The type of the action to be acted
     act_type: ActionSense,
     /// The key that stops the acting
@@ -47,6 +51,11 @@ impl Actor {
         }
     }
 
+    /// Set the type of the action to be acted. This has no effect on the current acting.
+    pub fn set_act_type(&mut self, act_type: ActionSense) {
+        self.act_type = act_type;
+    }
+
     /// Set whether the actor is acting cyclically
     pub fn set_cyclic(&mut self, cyclic: bool) {
         *self.cyclic.lock().unwrap() = cyclic;
@@ -56,7 +65,11 @@ impl Actor {
     /// This will work in a new thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the acting to finish.
     pub fn act(&mut self) {
-        todo!("Actor::act()")
+        let filter = self.act_type.clone();
+        let final_script = self.script.clone().lock().unwrap().to_filtered(filter);
+        let begin = chrono::Utc::now();
+
+        thread::spawn(move || {});
     }
 
     /// Interrupt the actor from acting (it will do nothing if the actor is not acting)
