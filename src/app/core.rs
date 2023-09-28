@@ -1,5 +1,6 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, Image, ImageButton, Rect, Sense, Vec2, Visuals};
+use eframe::egui::load::SizedTexture;
 use crate::app::misc::{prepare_font, IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
@@ -48,6 +49,9 @@ impl TapeApp {
     pub fn new(cc: &CreationContext) -> TapeApp {
         prepare_font(&cc.egui_ctx);
 
+        // not nessary for now
+        // egui_extras::install_image_loaders(&cc.egui_ctx);
+
         TapeApp {
             icons: TapeIcon::new(),
             app_state: AppState::Idle,
@@ -95,18 +99,25 @@ impl TapeApp {
                 ui.visuals_mut().button_frame = false;
                 ui.add_space(8.0);
 
+
+                // TODO: use better loader on the buttons
+
                 // close the window
                 if ui.add(ImageButton::new(
-                    self.icons.get(IconName::Close).texture_id(ui.ctx()),
-                    egui::vec2(12.0, 12.0),
+                    Image::from_texture(SizedTexture::new(
+                        self.icons.get(IconName::Close).texture_id(ui.ctx()),
+                        egui::vec2(12.0, 12.0),
+                    ))
                 )).on_hover_text("Close the window").clicked() {
                     frame.close();
                 }
 
                 // minimize the window
                 if ui.add(ImageButton::new(
-                    self.icons.get(IconName::Min).texture_id(ui.ctx()),
-                    egui::vec2(12.0, 12.0),
+                    Image::from_texture(SizedTexture::new(
+                        self.icons.get(IconName::Min).texture_id(ui.ctx()),
+                        egui::vec2(12.0, 12.0),
+                    ))
                 )).on_hover_text("Minimize the window").clicked() {
                     frame.set_minimized(true);
                 }
@@ -114,15 +125,19 @@ impl TapeApp {
                 // switch between dark & light mode
                 // if ui.style().visuals.dark_mode {
                 //     if ui.add(ImageButton::new(
-                //         self.icons.get(IconName::Light).texture_id(ui.ctx()),
-                //         egui::vec2(16.0, 16.0),
+                //         Image::from_texture(SizedTexture::new(
+                //             self.icons.get(IconName::Light).texture_id(ui.ctx()),
+                //             egui::vec2(12.0, 12.0),
+                //         ))
                 //     )).on_hover_text("Switch to light mode").clicked() {
                 //         ui.ctx().set_visuals(Visuals::light());
                 //     }
                 // } else {
                 //     if ui.add(ImageButton::new(
-                //         self.icons.get(IconName::Dark).texture_id(ui.ctx()),
-                //         egui::vec2(16.0, 16.0),
+                //         Image::from_texture(SizedTexture::new(
+                //             self.icons.get(IconName::Dark).texture_id(ui.ctx()),
+                //             egui::vec2(16.0, 16.0),
+                //         ))
                 //     )).on_hover_text("Switch to dark mode").clicked() {
                 //         ui.ctx().set_visuals(Visuals::dark());
                 //     }
@@ -132,8 +147,10 @@ impl TapeApp {
                 if self.app_route != AppRoute::Home {
                     // close the window
                     if ui.add(ImageButton::new(
-                        self.icons.get(IconName::Back).texture_id(ui.ctx()),
-                        egui::vec2(12.0, 12.0),
+                        Image::from_texture(SizedTexture::new(
+                            self.icons.get(IconName::Back).texture_id(ui.ctx()),
+                            egui::vec2(12.0, 12.0),
+                        ))
                     )).on_hover_text("Back to home").clicked() {
                         self.set_app_route(AppRoute::Home);
                     }
