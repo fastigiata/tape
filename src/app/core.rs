@@ -50,7 +50,7 @@ impl TapeApp {
         prepare_font(&cc.egui_ctx);
 
         // not nessary for now
-        // egui_extras::install_image_loaders(&cc.egui_ctx);
+        egui_extras::install_image_loaders(&cc.egui_ctx);
 
         TapeApp {
             icons: TapeIcon::new(),
@@ -99,59 +99,46 @@ impl TapeApp {
                 ui.visuals_mut().button_frame = false;
                 ui.add_space(8.0);
 
-
-                // TODO: use better loader on the buttons
-
                 // close the window
                 if ui.add(ImageButton::new(
-                    Image::from_texture(SizedTexture::new(
-                        self.icons.get(IconName::Close).texture_id(ui.ctx()),
-                        egui::vec2(12.0, 12.0),
-                    ))
-                )).on_hover_text("Close the window").clicked() {
+                    self.icons.sized_image(IconName::Close, egui::vec2(12.0, 12.0))
+                ))
+                    .on_hover_text("Close the window").clicked() {
                     frame.close();
                 }
 
                 // minimize the window
                 if ui.add(ImageButton::new(
-                    Image::from_texture(SizedTexture::new(
-                        self.icons.get(IconName::Min).texture_id(ui.ctx()),
-                        egui::vec2(12.0, 12.0),
-                    ))
-                )).on_hover_text("Minimize the window").clicked() {
+                    self.icons.sized_image(IconName::Min, egui::vec2(12.0, 12.0))
+                ))
+                    .on_hover_text("Minimize the window").clicked() {
                     frame.set_minimized(true);
                 }
 
                 // switch between dark & light mode
-                // if ui.style().visuals.dark_mode {
-                //     if ui.add(ImageButton::new(
-                //         Image::from_texture(SizedTexture::new(
-                //             self.icons.get(IconName::Light).texture_id(ui.ctx()),
-                //             egui::vec2(12.0, 12.0),
-                //         ))
-                //     )).on_hover_text("Switch to light mode").clicked() {
-                //         ui.ctx().set_visuals(Visuals::light());
-                //     }
-                // } else {
-                //     if ui.add(ImageButton::new(
-                //         Image::from_texture(SizedTexture::new(
-                //             self.icons.get(IconName::Dark).texture_id(ui.ctx()),
-                //             egui::vec2(16.0, 16.0),
-                //         ))
-                //     )).on_hover_text("Switch to dark mode").clicked() {
-                //         ui.ctx().set_visuals(Visuals::dark());
-                //     }
-                // }
+                if ui.style().visuals.dark_mode {
+                    if ui.add(ImageButton::new(
+                        self.icons.sized_image(IconName::Light, egui::vec2(12.0, 12.0))
+                    ))
+                        .on_hover_text("Switch to light mode").clicked() {
+                        ui.ctx().set_visuals(Visuals::light());
+                    }
+                } else {
+                    if ui.add(ImageButton::new(
+                        self.icons.sized_image(IconName::Dark, egui::vec2(12.0, 12.0))
+                    ))
+                        .on_hover_text("Switch to dark mode").clicked() {
+                        ui.ctx().set_visuals(Visuals::dark());
+                    }
+                }
 
                 // render the 'back' button if the 'app_route' is not 'Home'
                 if self.app_route != AppRoute::Home {
                     // close the window
                     if ui.add(ImageButton::new(
-                        Image::from_texture(SizedTexture::new(
-                            self.icons.get(IconName::Back).texture_id(ui.ctx()),
-                            egui::vec2(12.0, 12.0),
-                        ))
-                    )).on_hover_text("Back to home").clicked() {
+                        self.icons.sized_image(IconName::Back, egui::vec2(12.0, 12.0))
+                    ))
+                        .on_hover_text("Back to home").clicked() {
                         self.set_app_route(AppRoute::Home);
                     }
                 }
