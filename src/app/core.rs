@@ -1,6 +1,5 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, Image, ImageButton, Rect, Sense, Vec2, Visuals};
-use eframe::egui::load::SizedTexture;
+use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
 use crate::app::misc::{prepare_font, IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
 
