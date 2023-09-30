@@ -9,7 +9,7 @@ mod prefab;
 pub fn run_tape_app() {
     let options = eframe::NativeOptions {
         icon_data: IconData::try_from_png_bytes(include_bytes!("../assets/tape.png")).ok(),
-        always_on_top: false,
+        always_on_top: true,
         centered: true,
         resizable: false,
         decorated: false,
