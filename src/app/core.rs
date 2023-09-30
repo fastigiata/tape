@@ -1,7 +1,8 @@
 use eframe::{CreationContext, egui, glow};
-use eframe::egui::{Align, Align2, CentralPanel, FontFamily, FontId, Id, ImageButton, Rect, Sense, Vec2, Visuals};
+use eframe::egui::{Align, Align2, CentralPanel, Color32, FontFamily, FontId, Id, ImageButton, Rect, Sense, Visuals};
 use crate::app::misc::{prepare_font, IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
+use crate::app::prefab::text_en;
 
 // region Constants
 const APP_BORDER_RADIUS: f32 = 8.0;
@@ -11,6 +12,24 @@ const APP_BANNER_H: f32 = 32.0;
 // region Helpers
 #[derive(Debug, PartialEq)]
 pub enum AppState { Idle, Record, Act }
+
+impl AppState {
+    pub fn display_name(&self) -> String {
+        match self {
+            AppState::Idle => "idle",
+            AppState::Record => "recording",
+            AppState::Act => "acting",
+        }.to_string()
+    }
+
+    pub fn color(&self) -> Color32 {
+        match self {
+            AppState::Idle => Color32::from_rgb(201, 201, 201),
+            AppState::Record => Color32::from_rgb(255, 0, 0),
+            AppState::Act => Color32::from_rgb(0, 255, 0),
+        }
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub enum AppRoute { Home, Record, Act, History, About }
@@ -48,7 +67,7 @@ impl TapeApp {
     pub fn new(cc: &CreationContext) -> TapeApp {
         prepare_font(&cc.egui_ctx);
 
-        // not nessary for now
+        // for image support
         egui_extras::install_image_loaders(&cc.egui_ctx);
 
         TapeApp {
@@ -56,6 +75,11 @@ impl TapeApp {
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
         }
+    }
+
+    /// Set the state of the app
+    pub fn set_app_state(&mut self, state: AppState) {
+        self.app_state = state;
     }
 
     /// Set the route of the app
@@ -91,58 +115,86 @@ impl TapeApp {
             frame.drag_window();
         }
 
-        // operate the banner -- dark/light mode, minimize, close
-        ui.allocate_ui_at_rect(rect, |ui| {
-            // render the buttons on the right side
-            ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
-                ui.visuals_mut().button_frame = false;
-                ui.add_space(8.0);
+        // left side buttons (app state)
+        ui.allocate_ui_at_rect(
+            {
+                let mut l_rect = rect;
+                l_rect.max.x = (rect.min.x + rect.max.x) / 2.0;
+                l_rect
+            },
+            |ui| {
+                ui.with_layout(egui::Layout::left_to_right(Align::Center), |ui| {
+                    ui.add_space(8.0);
 
-                // close the window
-                if ui.add(ImageButton::new(
-                    self.icons.sized_image(IconName::Close, egui::vec2(12.0, 12.0))
-                ))
-                    .on_hover_text("Close the window").clicked() {
-                    frame.close();
-                }
+                    ui.painter().circle_filled(
+                        rect.left_center() + egui::vec2(16.0, 0.0),
+                        8.0,
+                        self.app_state.color(),
+                    );
 
-                // minimize the window
-                if ui.add(ImageButton::new(
-                    self.icons.sized_image(IconName::Min, egui::vec2(12.0, 12.0))
-                ))
-                    .on_hover_text("Minimize the window").clicked() {
-                    frame.set_minimized(true);
-                }
+                    // show the app state
+                    ui.label(text_en(format!("State | {}", self.app_state.display_name()), 14.0));
+                });
+            },
+        );
 
-                // switch between dark & light mode
-                if ui.style().visuals.dark_mode {
-                    if ui.add(ImageButton::new(
-                        self.icons.sized_image(IconName::Light, egui::vec2(12.0, 12.0))
-                    ))
-                        .on_hover_text("Switch to light mode").clicked() {
-                        ui.ctx().set_visuals(Visuals::light());
-                    }
-                } else {
-                    if ui.add(ImageButton::new(
-                        self.icons.sized_image(IconName::Dark, egui::vec2(12.0, 12.0))
-                    ))
-                        .on_hover_text("Switch to dark mode").clicked() {
-                        ui.ctx().set_visuals(Visuals::dark());
-                    }
-                }
+        // right side buttons (close, minimize, dark/light mode)
+        ui.allocate_ui_at_rect(
+            {
+                let mut r_rect = rect;
+                r_rect.min.x = (rect.min.x + rect.max.x) / 2.0;
+                r_rect
+            },
+            |ui| {
+                // render the buttons on the right side
+                ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
+                    ui.visuals_mut().button_frame = false;
+                    ui.add_space(8.0);
 
-                // render the 'back' button if the 'app_route' is not 'Home'
-                if self.app_route != AppRoute::Home {
                     // close the window
                     if ui.add(ImageButton::new(
-                        self.icons.sized_image(IconName::Back, egui::vec2(12.0, 12.0))
-                    ))
-                        .on_hover_text("Back to home").clicked() {
-                        self.set_app_route(AppRoute::Home);
+                        self.icons.sized_image(IconName::Close, egui::vec2(12.0, 12.0))
+                    )).on_hover_text("Close the window").clicked() {
+                        frame.close();
                     }
-                }
-            });
-        });
+
+                    // minimize the window
+                    if ui.add(ImageButton::new(
+                        self.icons.sized_image(IconName::Min, egui::vec2(12.0, 12.0))
+                    )).on_hover_text("Minimize the window").clicked() {
+                        frame.set_minimized(true);
+                    }
+
+                    // switch between dark & light mode
+                    if ui.style().visuals.dark_mode {
+                        if ui.add(ImageButton::new(
+                            self.icons.sized_image(IconName::Light, egui::vec2(12.0, 12.0))
+                        ))
+                            .on_hover_text("Switch to light mode").clicked() {
+                            ui.ctx().set_visuals(Visuals::light());
+                        }
+                    } else {
+                        if ui.add(ImageButton::new(
+                            self.icons.sized_image(IconName::Dark, egui::vec2(12.0, 12.0))
+                        ))
+                            .on_hover_text("Switch to dark mode").clicked() {
+                            ui.ctx().set_visuals(Visuals::dark());
+                        }
+                    }
+
+                    // render the 'back' button if the 'app_route' is not 'Home'
+                    if self.app_route != AppRoute::Home {
+                        // close the window
+                        if ui.add(ImageButton::new(
+                            self.icons.sized_image(IconName::Back, egui::vec2(12.0, 12.0))
+                        ))
+                            .on_hover_text("Back to home").clicked() {
+                            self.set_app_route(AppRoute::Home);
+                        }
+                    }
+                });
+            },
+        );
     }
 
     /// Render the outlet
