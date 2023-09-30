@@ -1,5 +1,5 @@
 use eframe::egui::{Rect, Ui};
-use crate::app::core::{AppRoute, TapeApp};
+use crate::app::core::{AppRoute, AppState, TapeApp};
 
 pub fn home_renderer(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut eframe::Frame) {
     ui.allocate_ui_at_rect(rect, |ui| {
@@ -23,6 +23,18 @@ pub fn home_renderer(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut efr
 
         if ui.button("Go to About").clicked() {
             app.set_app_route(AppRoute::About);
+        }
+
+        if ui.button("Set State = Idle").clicked() {
+            app.set_app_state(AppState::Idle);
+        }
+
+        if ui.button("Set State = Record").clicked() {
+            app.set_app_state(AppState::Record);
+        }
+
+        if ui.button("Set State = Act").clicked() {
+            app.set_app_state(AppState::Act);
         }
     });
 }
