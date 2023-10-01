@@ -1,0 +1,1 @@
+//! This file contains the notifier of the app.
