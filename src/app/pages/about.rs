@@ -1,5 +1,5 @@
 use eframe::egui;
-use eframe::egui::{Align, Rect, Separator, Ui};
+use eframe::egui::{Align, Rect, ScrollArea, Separator, Ui};
 use crate::app::core::{TapeApp};
 use crate::app::prefab;
 
@@ -35,22 +35,21 @@ pub fn about_renderer(_app: &mut TapeApp, rect: Rect, ui: &mut Ui, _frame: &mut 
             v
         },
         |ui| {
-            ui.with_layout(egui::Layout::top_down(Align::Center), |ui| {
+            ScrollArea::vertical().show(ui, |ui| {
                 // ===== section: description
-                ui.label(prefab::text_en("About Tape", 24.0));
+                ui.label(prefab::text_en("About Tape", 18.0));
                 ui.add_space(6.0);
-                ui.label(prefab::text_en(TAPE_ABOUT, 16.0));
+                ui.label(prefab::text_en(TAPE_ABOUT, 14.0));
 
                 // separator
-                ui.add(Separator::default().spacing(32.0));
+                ui.add(Separator::default().spacing(24.0));
 
                 // ===== section: license
-                ui.label(prefab::text_en("License", 24.0));
+                ui.label(prefab::text_en("License", 18.0));
                 ui.add_space(6.0);
-                ui.label(prefab::text_en(TAPE_LICENSE, 16.0));
+                ui.label(prefab::text_en(TAPE_LICENSE, 14.0));
 
-                // ui.label(prefab::text_en("MIT. Copyright (c) 2023 lopo12123", 16.0));
-                // if ui.link(prefab::text_en("Click here for details", 16.0)).clicked() {
+                // if ui.link(prefab::text_en("Click here for details", 14.0)).clicked() {
                 //     ui.ctx().output_mut(|o| {
                 //         o.open_url = Some(OpenUrl::same_tab(TAPE_LICENSE_URL));
                 //     });
