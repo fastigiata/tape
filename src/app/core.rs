@@ -24,9 +24,9 @@ impl AppState {
 
     pub fn color(&self) -> Color32 {
         match self {
-            AppState::Idle => Color32::from_rgb(201, 201, 201),
-            AppState::Record => Color32::from_rgb(255, 0, 0),
-            AppState::Act => Color32::from_rgb(0, 255, 0),
+            AppState::Idle => Color32::from_rgb(94, 185, 110),
+            AppState::Record => Color32::from_rgb(252, 83, 86),
+            AppState::Act => Color32::from_rgb(243, 143, 49),
         }
     }
 }
@@ -126,14 +126,15 @@ impl TapeApp {
                 ui.with_layout(egui::Layout::left_to_right(Align::Center), |ui| {
                     ui.add_space(8.0);
 
+                    // show the app state
                     ui.painter().circle_filled(
                         rect.left_center() + egui::vec2(16.0, 0.0),
                         8.0,
                         self.app_state.color(),
                     );
 
-                    // show the app state
-                    ui.label(text_en(format!("State | {}", self.app_state.display_name()), 14.0));
+                    ui.add_space(24.0);
+                    ui.label(text_en(self.app_state.display_name(), 16.0));
                 });
             },
         );
