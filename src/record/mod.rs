@@ -60,7 +60,7 @@ impl Recorder {
     /// This will work in a new thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
     /// ---
-    /// on_finish: a callback function that will be called when the recording is finished
+    /// **on_finish**: a callback function that will be called when the recording is finished
     /// - If set to None, do nothing when the recording is finished
     /// - If set to Some(f), call f(script) when the recording is finished
     pub fn record(&self, on_finish: Option<Box<dyn FnOnce(Script) + Send>>) {
@@ -176,13 +176,12 @@ impl Recorder {
         });
     }
 
-    /// Finish recording and return the script
-    pub fn finish(&self) -> Script {
+    /// Interrupt the recording.
+    ///
+    /// If you want to manipulate the result, please set the **on_finish** when calling [record](#method.record).
+    pub fn finish(&self) {
         // set the working flag to false
         *self.mission_guard.lock().unwrap() = false;
-
-        // return the script
-        self.script.lock().unwrap().clone()
     }
 }
 
