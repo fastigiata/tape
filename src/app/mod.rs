@@ -1,8 +1,7 @@
 use eframe::{egui, IconData, Theme};
 
 mod core;
-mod helper;
-mod misc;
+mod prelude;
 mod pages;
 mod prefab;
 
