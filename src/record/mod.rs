@@ -1,6 +1,7 @@
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use chrono::Utc;
 use device_query::{DeviceEvents, DeviceQuery, DeviceState, Keycode, MouseButton};
 use crate::canonicalize::declaration::{ActionType, CanonicalKey};
 use crate::canonicalize::{Action, ActionSense, Script};
@@ -27,6 +28,11 @@ impl Script {
     /// Add a mouse action to the script
     pub fn add_mouse_action(&mut self, ev: ActionType, target: MouseButton, pos: (i32, i32)) {
         self.add_action(Action::from_mouse(ev, target.into(), pos));
+    }
+
+    /// Bind actions into a script (use the creation time of the script to the current time as the duration)
+    pub fn bound(&mut self) {
+        self.duration = Utc::now().timestamp_millis() - self.ctime;
     }
 }
 
@@ -167,6 +173,9 @@ impl Recorder {
                 // sleep for a while to avoid too frequent checking
                 thread::sleep(Duration::from_millis(LOOP_GAP));
             };
+
+            // bind the script
+            script.lock().unwrap().bound();
 
             // call the callback function if it is set
             if let Some(f) = on_finish {
