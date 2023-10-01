@@ -32,7 +32,7 @@ impl AppState {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum AppRoute { Home, Record, Act, History, About }
+pub enum AppRoute { Home, Record, Act, History, Setting, About }
 
 impl AppRoute {
     pub fn name(&self) -> String {
@@ -41,19 +41,10 @@ impl AppRoute {
             AppRoute::Record => "Record",
             AppRoute::Act => "Act",
             AppRoute::History => "History",
+            AppRoute::Setting => "Setting",
             AppRoute::About => "About",
         }.to_string()
     }
-
-    // pub fn window_size(&self) -> Vec2 {
-    //     match self {
-    //         AppRoute::Home => egui::vec2(400.0, 240.0),
-    //         AppRoute::Record => egui::vec2(800.0, 600.0),
-    //         AppRoute::Act => egui::vec2(800.0, 600.0),
-    //         AppRoute::History => egui::vec2(800.0, 600.0),
-    //         AppRoute::About => egui::vec2(800.0, 600.0),
-    //     }
-    // }
 }
 // endregion
 
@@ -214,9 +205,6 @@ impl TapeApp {
 
     /// Render the entire app (including the banner and outlet)
     fn render_app(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        // set the window size according to the 'app_route'
-        // frame.set_window_size(self.app_route.window_size());
-
         CentralPanel::default()
             .frame(egui::Frame {
                 fill: ctx.style().visuals.window_fill(),

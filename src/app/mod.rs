@@ -16,7 +16,7 @@ pub fn run_tape_app() {
         transparent: true,
         follow_system_theme: false,
         default_theme: Theme::Light,
-        initial_window_size: Some(egui::vec2(800.0, 600.0)),
+        initial_window_size: Some(egui::vec2(400.0, 300.0)),
         ..Default::default()
     };
 
