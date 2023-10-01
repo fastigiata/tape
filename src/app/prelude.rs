@@ -1,3 +1,7 @@
+//! This file contains the preludes of the app. Includes the following:
+//! - color selection
+//! - font selection
+//! - icon selection
 use std::collections::HashMap;
 use eframe::egui::{Color32, Context, FontData, FontDefinitions, FontFamily, Image, Vec2};
 

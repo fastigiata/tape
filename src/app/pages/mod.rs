@@ -1,3 +1,4 @@
+//! This file contains the pages of the app. Each page is a module that contains a renderer function.
 mod home;
 mod about;
 

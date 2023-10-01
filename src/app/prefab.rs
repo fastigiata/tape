@@ -1,3 +1,5 @@
+//! This file contains the prefabs of the app. Includes the following:
+//! - Text
 use eframe::egui::{FontFamily, FontId, RichText};
 
 pub fn text_en(text: impl Into<String>, size: f32) -> RichText {
