@@ -59,7 +59,11 @@ impl Recorder {
     /// Start recording.
     /// This will work in a new thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
-    pub fn record(&self) {
+    /// ---
+    /// on_finish: a callback function that will be called when the recording is finished
+    /// - If set to None, do nothing when the recording is finished
+    /// - If set to Some(f), call f(script) when the recording is finished
+    pub fn record(&self, on_finish: Option<Box<dyn FnOnce(Script) + Send>>) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
 
@@ -163,6 +167,12 @@ impl Recorder {
                 // sleep for a while to avoid too frequent checking
                 thread::sleep(Duration::from_millis(LOOP_GAP));
             };
+
+            // call the callback function if it is set
+            if let Some(f) = on_finish {
+                let copy = script.lock().unwrap().clone();
+                f(copy);
+            };
         });
     }
 
@@ -183,13 +193,16 @@ mod unit_test {
     #[test]
     fn record() {
         let recorder = Recorder::new(ActionSense::Keyboard, Some(CanonicalKey::Escape));
-        recorder.record();
+        recorder.record(Some(Box::new(|script| {
+            println!("script: {:?}", script.duration);
+        })));
 
         thread::sleep(Duration::from_secs(5));
 
-        match recorder.finish().publish() {
-            Ok(v) => println!("ok!\n{}", v),
-            Err(e) => println!("err!\n{}", e),
-        }
+        // match recorder.finish().publish() {
+        //     Ok(v) => println!("ok!\n{}", v),
+        //     Err(e) => println!("err!\n{}", e),
+        // }
+        //
     }
 }
