@@ -94,16 +94,16 @@ impl Actor {
             }
 
             // use 'Instant' to record the beginning time
-            let begin_time = Instant::now();
+            let mut begin_time = Instant::now();
 
             // do acting until the mission is finished
             while *mission_guard.lock().unwrap() {
                 // get the elapsed time, calculate the frame on the 'timeline'
-                let elapsed_ms = begin_time.elapsed().as_millis();
+                let elapsed_ms = begin_time.elapsed().as_millis() as i64;
 
                 // get the next action if there is one, otherwise check whether the script is cyclic or not
                 if let Some(next_action) = script_copy.next_action() {
-                    let wait_time = next_action.timeline - elapsed_ms as i64;
+                    let wait_time = next_action.timeline - elapsed_ms;
                     if wait_time > 0 { thread::sleep(Duration::from_millis(wait_time as u64)); }
 
                     match next_action.action {
@@ -128,12 +128,18 @@ impl Actor {
                         }
                     }
                 } else {
-                    // if the script is finished, check whether it is cyclic
+                    // 1 - check whether the script is finished even if there is no next action
+                    if elapsed_ms < script_copy.duration {
+                        thread::sleep(Duration::from_millis((script_copy.duration - elapsed_ms) as u64));
+                    }
+
+                    // 2 - check whether it is cyclic
                     if *cyclic_flag.lock().unwrap() {
-                        // if cyclic, reset the cursor and continue
+                        // 2.1 - if cyclic, reset the cursor and the beginning time
                         script_copy.reset_cursor();
+                        begin_time = Instant::now();
                     } else {
-                        // if not cyclic, finish the mission
+                        // 2.2 - if not, finish the mission
                         *mission_guard.lock().unwrap() = false;
                         return;
                     }
@@ -165,7 +171,7 @@ mod unit_test {
         let script_raw = r##"
 name = "2023-09-26T14:52:04.720709900+00:00"
 ctime = 1695739924720
-duration = 4966
+duration = 7000
 
 [[actions]]
 ctime = 1695739927090
@@ -352,8 +358,8 @@ Keyboard = ["Press", "KeyI"]
 
         actor.act();
 
-        // sleep 6 seconds for the actor to preform
-        thread::sleep(Duration::from_secs(6));
+        // sleep 8 seconds for the actor to preform
+        thread::sleep(Duration::from_secs(8));
 
         println!("finish!");
     }
