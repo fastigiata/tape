@@ -1,5 +1,5 @@
 use eframe::egui;
-use eframe::egui::{Align, Rect, ScrollArea, Separator, Ui};
+use eframe::egui::{Rect, ScrollArea, Separator, Ui};
 use crate::app::core::{TapeApp};
 use crate::app::prefab;
 
