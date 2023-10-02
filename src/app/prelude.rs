@@ -19,6 +19,7 @@ impl TapeColor {
 // region -- font selection
 const FONT_MASHANZHENG: &'static [u8] = include_bytes!("../assets/fonts/MaShanZheng-Regular.ttf");
 const FONT_MOOLI: &'static [u8] = include_bytes!("../assets/fonts/Mooli-Regular.ttf");
+const FONT_ICONFONT: &'static [u8] = include_bytes!("../assets/fonts/iconfont.ttf");
 
 pub fn prepare_font(ctx: &Context) {
     // default fonts (from egui)
@@ -42,6 +43,16 @@ pub fn prepare_font(ctx: &Context) {
     fonts.families.insert(
         FontFamily::Name("Mooli".into()),
         vec!["Mooli".to_string()],
+    );
+
+    // add the font -- iconfont
+    fonts.font_data.insert(
+        "iconfont".to_string(),
+        FontData::from_static(FONT_ICONFONT),
+    );
+    fonts.families.insert(
+        FontFamily::Name("iconfont".into()),
+        vec!["iconfont".to_string()],
     );
 
     // set the fonts
