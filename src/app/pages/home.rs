@@ -38,19 +38,5 @@ pub fn home_renderer(app: &mut TapeApp, rect: Rect, ui: &mut Ui, frame: &mut efr
         if ui.button("Set State = Act").clicked() {
             app.set_app_state(AppState::Act);
         }
-
-        ui.separator();
-
-        if ui.button("Set Attention = Critical").clicked() {
-            frame.request_user_attention(UserAttentionType::Critical);
-        }
-
-        if ui.button("Set Attention = Informational").clicked() {
-            frame.request_user_attention(UserAttentionType::Informational);
-        }
-
-        if ui.button("Set Attention = Reset").clicked() {
-            frame.request_user_attention(UserAttentionType::Reset);
-        }
     });
 }
