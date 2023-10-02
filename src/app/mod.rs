@@ -8,6 +8,7 @@ mod notify;
 
 pub fn run_tape_app() {
     let options = eframe::NativeOptions {
+        app_id: Some("tape".to_string()),
         icon_data: IconData::try_from_png_bytes(include_bytes!("../assets/tape.png")).ok(),
         always_on_top: false,
         centered: true,
