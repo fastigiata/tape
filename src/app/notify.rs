@@ -10,6 +10,10 @@ pub struct Notifier {}
 impl Notifier {
     pub fn notify(detail: &str) {
         Toast::new(APP_ID)
+            // .icon(
+            //     std::env::current_dir().unwrap().join("src/assets/tape.png").as_path(),
+            //     tauri_winrt_notification::IconCrop::Circular, "Tape",
+            // )
             .title("Tape")
             .text1(detail)
             .duration(Duration::Short)
