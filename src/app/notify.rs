@@ -8,7 +8,7 @@ const APP_ID: &'static str = "tray_clock";
 pub struct Notifier {}
 
 impl Notifier {
-    pub fn tell(detail: &str) {
+    pub fn notify(detail: &str) {
         Toast::new(APP_ID)
             .title("Tape")
             .text1(detail)
@@ -24,6 +24,6 @@ mod unit_test {
 
     #[test]
     fn ttt() {
-        Notifier::tell("hello");
+        Notifier::notify("hello");
     }
 }
