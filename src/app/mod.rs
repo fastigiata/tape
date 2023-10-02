@@ -1,4 +1,5 @@
 use eframe::{egui, IconData, Theme};
+use crate::app::notify::Notifier;
 
 mod core;
 mod prelude;
@@ -28,8 +29,9 @@ pub fn run_tape_app() {
     ) {
         Ok(_) => {}
         Err(err) => {
-            // TODO: notify the error
+            // notify the error
             println!("Error: {}", err);
+            Notifier::notify(&format!("Error: {}", err));
         }
     };
 }
