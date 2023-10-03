@@ -51,9 +51,16 @@ impl Actor {
         }
     }
 
-    /// Set the type of the action to be acted.
+    /// Set the script to be acted.
     ///
     /// This has no effect on the current acting. (The script is copied once [act](#method.act) is called)
+    pub fn new_script(&mut self, script: Script) {
+        self.script = script;
+    }
+
+    /// Set the type of the action to be acted.
+    ///
+    /// This has no effect on the current acting. (The script is copied and filtered once [act](#method.act) is called)
     pub fn set_act_type(&mut self, act_type: ActionSense) {
         self.act_type = act_type;
     }
