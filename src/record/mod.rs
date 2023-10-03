@@ -51,6 +51,17 @@ pub struct Recorder {
     script: Arc<Mutex<Script>>,
 }
 
+impl Default for Recorder {
+    fn default() -> Self {
+        Recorder {
+            record_type: ActionSense::Keyboard,
+            stop_signal: Some(CanonicalKey::Escape),
+            mission_guard: Arc::new(Mutex::new(false)),
+            script: Arc::new(Mutex::new(Script::empty())),
+        }
+    }
+}
+
 impl Recorder {
     /// Create a new recorder
     pub fn new(record_type: ActionSense, stop_signal: Option<CanonicalKey>) -> Self {

@@ -39,6 +39,18 @@ pub struct Actor {
     script: Script,
 }
 
+impl Default for Actor {
+    fn default() -> Self {
+        Actor {
+            act_type: ActionSense::Both,
+            stop_signal: Some(CanonicalKey::Escape),
+            cyclic: Arc::new(Mutex::new(false)),
+            mission_guard: Arc::new(Mutex::new(false)),
+            script: Script::empty(),
+        }
+    }
+}
+
 impl Actor {
     /// Create a new actor
     pub fn new(script: Script, cyclic: bool, act_type: ActionSense, stop_signal: Option<CanonicalKey>) -> Self {
