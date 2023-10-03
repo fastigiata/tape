@@ -4,7 +4,7 @@ use crate::app::notify::Notifier;
 mod core;
 mod prelude;
 mod pages;
-mod prefab;
+mod component;
 mod notify;
 
 pub fn run_tape_app() {

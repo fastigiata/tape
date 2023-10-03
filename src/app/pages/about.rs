@@ -1,7 +1,7 @@
 use eframe::egui;
 use eframe::egui::{Rect, ScrollArea, Separator, Ui};
 use crate::app::core::{TapeApp};
-use crate::app::prefab;
+use crate::app::component;
 
 const TAPE_ABOUT: &'static str = "Tape is an application for recording mouse and/or keyboard actions, which can generate a recording file for later playback.";
 const TAPE_LICENSE: &'static str = r##"Copyright (c) 2018-2021 lopo <lopo@zju.edu.cn>
@@ -37,17 +37,17 @@ pub fn about_renderer(_app: &mut TapeApp, rect: Rect, ui: &mut Ui, _frame: &mut 
         |ui| {
             ScrollArea::vertical().show(ui, |ui| {
                 // ===== section: description
-                ui.label(prefab::text_en("About Tape", 18.0));
+                ui.label(component::text_en("About Tape", 18.0));
                 ui.add_space(6.0);
-                ui.label(prefab::text_en(TAPE_ABOUT, 14.0));
+                ui.label(component::text_en(TAPE_ABOUT, 14.0));
 
                 // separator
                 ui.add(Separator::default().spacing(24.0));
 
                 // ===== section: license
-                ui.label(prefab::text_en("License", 18.0));
+                ui.label(component::text_en("License", 18.0));
                 ui.add_space(6.0);
-                ui.label(prefab::text_en(TAPE_LICENSE, 14.0));
+                ui.label(component::text_en(TAPE_LICENSE, 14.0));
 
                 // if ui.link(prefab::text_en("Click here for details", 14.0)).clicked() {
                 //     ui.ctx().output_mut(|o| {
