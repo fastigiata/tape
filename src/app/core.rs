@@ -118,14 +118,18 @@ impl TapeApp {
                 ui.with_layout(egui::Layout::left_to_right(Align::Center), |ui| {
                     ui.add_space(8.0);
 
-                    // show the app state
-                    ui.painter().circle_filled(
-                        rect.left_center() + egui::vec2(16.0, 0.0),
-                        8.0,
-                        self.app_state.color(),
-                    );
+                    // show the logo
+                    ui.add(self.icons.sized_image(IconName::TAPE, egui::vec2(24.0, 24.0)));
 
-                    ui.add_space(24.0);
+                    // show the app state circle
+                    // ui.painter().circle_filled(
+                    //     rect.left_center() + egui::vec2(48.0, 0.0),
+                    //     8.0,
+                    //     self.app_state.color(),
+                    // );
+
+                    // show the app state text
+                    // ui.add_space(8.0);
                     ui.label(text_en(self.app_state.display_name(), 16.0));
                 });
             },
