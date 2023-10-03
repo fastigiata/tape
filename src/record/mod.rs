@@ -62,6 +62,20 @@ impl Recorder {
         }
     }
 
+    /// Set the type of the action to be recorded
+    ///
+    /// This has no effect on the current recording. (The listener is set once [record](#method.record) is called.)
+    pub fn set_record_type(&mut self, record_type: ActionSense) {
+        self.record_type = record_type;
+    }
+
+    /// Set the key that stops the recording
+    ///
+    /// This has no effect on the current recording. (The signal is copied once [record](#method.record) is called.)
+    pub fn set_stop_signal(&mut self, stop_signal: Option<CanonicalKey>) {
+        self.stop_signal = stop_signal;
+    }
+
     /// Start recording.
     /// This will work in a new thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
