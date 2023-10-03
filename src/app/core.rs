@@ -2,7 +2,7 @@
 use eframe::{CreationContext, egui, glow};
 use eframe::egui::{Align, Align2, CentralPanel, Color32, FontFamily, FontId, Id, ImageButton, Rect, Sense, Visuals};
 use crate::app::prelude::{prepare_font, IconName, TapeIcon};
-use crate::app::pages::{about_renderer, home_renderer, PageRenderer};
+use crate::app::pages::{about_renderer, home_renderer, PageRenderer, record_renderer};
 use crate::app::component::{text_en};
 
 // region Constants
@@ -197,10 +197,11 @@ impl TapeApp {
     /// Render the outlet
     fn render_outlet(&mut self, rect: Rect, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         // get the renderer following the 'app_route'
+        // TODO: renderer for other routes
         let renderer: PageRenderer = match self.app_route {
             AppRoute::Home => home_renderer,
+            AppRoute::Record => record_renderer,
             AppRoute::About => about_renderer,
-            // TODO: renderer for other routes
             _ => home_renderer,
         };
 
