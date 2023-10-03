@@ -146,14 +146,14 @@ impl TapeApp {
 
                     // close the window
                     if ui.add(ImageButton::new(
-                        self.icons.sized_image(IconName::Close, egui::vec2(12.0, 12.0))
+                        self.icons.sized_image(IconName::Close, egui::vec2(14.0, 14.0))
                     )).on_hover_text("Close the window").clicked() {
                         frame.close();
                     }
 
                     // minimize the window
                     if ui.add(ImageButton::new(
-                        self.icons.sized_image(IconName::Min, egui::vec2(12.0, 12.0))
+                        self.icons.sized_image(IconName::Min, egui::vec2(14.0, 14.0))
                     )).on_hover_text("Minimize the window").clicked() {
                         frame.set_minimized(true);
                     }
@@ -161,14 +161,14 @@ impl TapeApp {
                     // switch between dark & light mode
                     if ui.style().visuals.dark_mode {
                         if ui.add(ImageButton::new(
-                            self.icons.sized_image(IconName::Light, egui::vec2(12.0, 12.0))
+                            self.icons.sized_image(IconName::Light, egui::vec2(14.0, 14.0))
                         ))
                             .on_hover_text("Switch to light mode").clicked() {
                             ui.ctx().set_visuals(Visuals::light());
                         }
                     } else {
                         if ui.add(ImageButton::new(
-                            self.icons.sized_image(IconName::Dark, egui::vec2(12.0, 12.0))
+                            self.icons.sized_image(IconName::Dark, egui::vec2(14.0, 14.0))
                         ))
                             .on_hover_text("Switch to dark mode").clicked() {
                             ui.ctx().set_visuals(Visuals::dark());
@@ -179,7 +179,7 @@ impl TapeApp {
                     if self.app_route != AppRoute::Home {
                         // close the window
                         if ui.add(ImageButton::new(
-                            self.icons.sized_image(IconName::Back, egui::vec2(12.0, 12.0))
+                            self.icons.sized_image(IconName::Back, egui::vec2(14.0, 14.0))
                         ))
                             .on_hover_text("Back to home").clicked() {
                             self.set_app_route(AppRoute::Home);
