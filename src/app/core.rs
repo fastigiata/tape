@@ -1,9 +1,11 @@
 //! This file contains the core of the app.
 use eframe::{CreationContext, egui, glow};
 use eframe::egui::{Align, Align2, CentralPanel, Color32, FontFamily, FontId, Id, ImageButton, Rect, Sense, Visuals};
+use crate::act::Actor;
 use crate::app::prelude::{prepare_font, IconName, TapeIcon};
 use crate::app::pages::{about_renderer, home_renderer, PageRenderer, record_renderer};
 use crate::app::component::{text_en};
+use crate::record::Recorder;
 
 // region Constants
 const APP_BORDER_RADIUS: f32 = 8.0;
@@ -53,6 +55,8 @@ pub struct TapeApp {
     icons: TapeIcon,
     app_state: AppState,
     app_route: AppRoute,
+    worker_record: Recorder,
+    worker_act: Actor,
 }
 
 impl TapeApp {
@@ -66,6 +70,8 @@ impl TapeApp {
             icons: TapeIcon::new(),
             app_state: AppState::Idle,
             app_route: AppRoute::Home,
+            worker_record: Default::default(),
+            worker_act: Default::default(),
         }
     }
 
