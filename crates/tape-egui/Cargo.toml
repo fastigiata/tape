@@ -1,0 +1,15 @@
+[package]
+name = "tape-egui"
+version = "0.1.0"
+edition = "2021"
+authors = ["lopo<lopo@zju.edu.cn>"]
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+tape-core = { path = "../tape-core" }
+
+eframe = { version = "0.23.0" }
+egui_extras = { version = "0.23.0", features = ["image", "svg"] }
+# this only works on windows, for cross-platform, consider using [notify-rust](https://crates.io/crates/notify-rust)
+tauri-winrt-notification = "0.1.2"
