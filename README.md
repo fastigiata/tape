@@ -15,7 +15,15 @@
 
 ## Architecture
 
-to be continued...
+This project uses the workspace structure, the following are its members
+
+- [`tape-core`](./crates/tape-core) Core library
+    - Rust implementation of recording and simulation of mouse/keyboard actions
+    - Canonical mouse/keyboard key and event declarations
+- [`tape-node`](./crates/tape-node) Node.js binding of the core library -- ⏳ **WIP**
+    - Node.js binding of the core library (using [napi-rs](https://github.com/napi-rs/napi-rs))
+- [`tape-egui`](./crates/tape-egui) Egui implementation of the application
+    - GUI implementation of the application (using [egui](https://github.com/emilk/egui))
 
 ## License
 
