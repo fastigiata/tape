@@ -1,7 +1,7 @@
 name: CI
 env:
   DEBUG: napi:*
-  APP_NAME: tape-node
+  APP_NAME: tape
   MACOSX_DEPLOYMENT_TARGET: '10.13'
 permissions:
   contents: write
@@ -11,7 +11,7 @@ permissions:
     branches:
       - master
     tags:
-      - 'release_v[0-9]+.[0-9]+.[0-9]+'
+      - release_v[0-9]+.[0-9]+.[0-9]+
     paths-ignore:
       - '**/*.md'
       - LICENSE

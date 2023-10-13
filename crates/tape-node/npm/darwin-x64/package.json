@@ -1,5 +1,5 @@
 {
-  "name": "tape-node-darwin-x64",
+  "name": "@fastigiata/tape-darwin-x64",
   "version": "0.0.0",
   "os": [
     "darwin"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "tape-node.darwin-x64.node",
+  "main": "tape.darwin-x64.node",
   "files": [
-    "tape-node.darwin-x64.node"
+    "tape.darwin-x64.node"
   ],
   "license": "MIT",
   "engines": {

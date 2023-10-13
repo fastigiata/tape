@@ -1,5 +1,5 @@
 {
-  "name": "tape-node-darwin-arm64",
+  "name": "@fastigiata/tape-darwin-arm64",
   "version": "0.0.0",
   "os": [
     "darwin"
@@ -7,9 +7,9 @@
   "cpu": [
     "arm64"
   ],
-  "main": "tape-node.darwin-arm64.node",
+  "main": "tape.darwin-arm64.node",
   "files": [
-    "tape-node.darwin-arm64.node"
+    "tape.darwin-arm64.node"
   ],
   "license": "MIT",
   "engines": {

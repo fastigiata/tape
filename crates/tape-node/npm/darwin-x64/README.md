@@ -1,3 +1,3 @@
-# `tape-node-darwin-x64`
+# `@fastigiata/tape-darwin-x64`
 
-This is the **x86_64-apple-darwin** binary for `tape-node`
+This is the **x86_64-apple-darwin** binary for `@fastigiata/tape`

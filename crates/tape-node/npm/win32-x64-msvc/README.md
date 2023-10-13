@@ -1,3 +1,3 @@
-# `tape-node-win32-x64-msvc`
+# `@fastigiata/tape-win32-x64-msvc`
 
-This is the **x86_64-pc-windows-msvc** binary for `tape-node`
+This is the **x86_64-pc-windows-msvc** binary for `@fastigiata/tape`
