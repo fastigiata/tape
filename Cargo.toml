@@ -4,6 +4,7 @@ members = [
     'crates/tape-core',
     'crates/tape-egui',
     'crates/tape-tauri/backend',
+    'crates/tape-node'
 ]
 
 [workspace.dependencies]
