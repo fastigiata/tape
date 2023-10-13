@@ -17,7 +17,7 @@
 
 This project uses the workspace structure, the following are its members
 
-- [`tape-core`](./crates/tape-core) Core library
+- [`tape-core`](./crates/tape-core) Core library -- ✅ **Completed**
     - Rust implementation of recording and simulation of mouse/keyboard actions
     - Canonical mouse/keyboard key and event declarations
 - [`tape-node`](./crates/tape-node) Node.js binding of the core library -- ⏳ **WIP**
