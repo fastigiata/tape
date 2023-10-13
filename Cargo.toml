@@ -3,7 +3,7 @@ resolver = "2"
 members = [
     'crates/tape-core',
     'crates/tape-egui',
-    'crates/tape-tauri',
+    'crates/tape-tauri/backend',
 ]
 
 [workspace.dependencies]
