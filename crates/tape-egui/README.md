@@ -1,2 +1,2 @@
-Tape is an application for recording mouse and/or keyboard actions, which can generate a recording file for later
-playback.
+This is a crappy sub-project. For front-end developers, it is too troublesome to use rust to create graphical
+interfaces. Maybe I will consider completing it again later...
