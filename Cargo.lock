@@ -4264,6 +4264,7 @@ dependencies = [
  "napi",
  "napi-build",
  "napi-derive",
+ "tape-core",
 ]
 
 [[package]]

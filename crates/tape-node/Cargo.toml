@@ -11,6 +11,8 @@ crate-type = ["cdylib"]
 napi = { version = "2.12.2", default-features = false, features = ["napi4"] }
 napi-derive = "2.12.2"
 
+tape-core = { path = "../tape-core" }
+
 [build-dependencies]
 napi-build = "2.0.1"
 
