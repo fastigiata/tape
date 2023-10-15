@@ -20,6 +20,17 @@ impl ActionSense {
     }
 }
 
+impl From<String> for ActionSense {
+    fn from(value: String) -> ActionSense {
+        match value.to_lowercase().as_str() {
+            "keyboard" => ActionSense::Keyboard,
+            "mouse" => ActionSense::Mouse,
+            "both" => ActionSense::Both,
+            _ => ActionSense::Keyboard,
+        }
+    }
+}
+
 /// An **action** is a single event that can be performed by an [actor](../act/struct.Actor.html)
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Action {
