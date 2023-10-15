@@ -9,6 +9,7 @@ use napi::{bindgen_prelude::{Result, AsyncTask}, Env, JsFunction, Task, threadsa
 mod record;
 mod act;
 
+// region callback example
 /// the callback will be invoked in another thread in 3 seconds (will arg "hi -- i'm from another thread")
 #[napi]
 pub fn callback_test(
@@ -27,7 +28,9 @@ pub fn callback_test(
 
     Ok(())
 }
+// endregion
 
+// region async-task example
 struct AsyncGreet {}
 
 impl Task for AsyncGreet {
@@ -50,3 +53,4 @@ impl Task for AsyncGreet {
 fn async_task_test() -> AsyncTask<AsyncGreet> {
     AsyncTask::new(AsyncGreet {})
 }
+// endregion
