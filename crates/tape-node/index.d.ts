@@ -5,7 +5,8 @@
 
 /** the callback will be invoked in another thread in 3 seconds (will arg "hi -- i'm from another thread") */
 export function callbackTest(callback: (v: string) => void): void
-export function asyncTaskTest(): Promise<unknown>
+/** the task will be resolved in 3 seconds (will return "hi -- i'm from async task") */
+export function asyncTaskTest(): Promise<string>
 export type NodeRecorder = Recorder
 export class Recorder {
   constructor(recordType: string, stopSignal?: string | undefined | null)

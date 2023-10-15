@@ -49,7 +49,7 @@ impl Task for AsyncGreet {
 
 
 /// the task will be resolved in 3 seconds (will return "hi -- i'm from async task")
-#[napi]
+#[napi(ts_return_type = "Promise<string>")]
 fn async_task_test() -> AsyncTask<AsyncGreet> {
     AsyncTask::new(AsyncGreet {})
 }
