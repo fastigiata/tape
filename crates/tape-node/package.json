@@ -5,6 +5,16 @@
     "license": "MIT",
     "main": "index.js",
     "types": "index.d.ts",
+    "packageManager": "yarn@3.6.4",
+    "scripts": {
+        "artifacts": "napi artifacts",
+        "build": "napi build --platform --release",
+        "build:debug": "napi build --platform",
+        "prepublishOnly": "napi prepublish -t npm",
+        "test": "ava",
+        "universal": "napi universal",
+        "version": "napi version"
+    },
     "napi": {
         "name": "tape",
         "triples": {
@@ -26,15 +36,5 @@
     },
     "engines": {
         "node": ">= 10"
-    },
-    "scripts": {
-        "artifacts": "napi artifacts",
-        "build": "napi build --platform --release",
-        "build:debug": "napi build --platform",
-        "prepublishOnly": "napi prepublish -t npm",
-        "test": "ava",
-        "universal": "napi universal",
-        "version": "napi version"
-    },
-    "packageManager": "yarn@3.6.4"
+    }
 }
