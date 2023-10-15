@@ -31,6 +31,11 @@ impl NodeRecorder {
         })));
     }
 
+    // #[napi]
+    // pub fn record_callback() {
+    // 
+    // }
+
     // TODO: record_callback | see https://napi.rs/docs/concepts/threadsafe-function
     // TODO: record_async | see https://napi.rs/docs/concepts/async-task
 }
