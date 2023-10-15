@@ -252,8 +252,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { Recorder, sum, callbackTest } = nativeBinding
+const { Recorder, callbackTest, asyncTaskTest } = nativeBinding
 
 module.exports.Recorder = Recorder
-module.exports.sum = sum
 module.exports.callbackTest = callbackTest
+module.exports.asyncTaskTest = asyncTaskTest

@@ -4,19 +4,10 @@
 extern crate napi_derive;
 
 use std::thread;
-use napi::{
-    bindgen_prelude::Result,
-    JsFunction,
-    threadsafe_function::{ThreadsafeFunction, ThreadsafeFunctionCallMode, ErrorStrategy},
-};
+use napi::{bindgen_prelude::{Result, AsyncTask}, Env, JsFunction, Task, threadsafe_function::{ThreadsafeFunction, ThreadsafeFunctionCallMode, ErrorStrategy}};
 
 mod record;
 mod act;
-
-#[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-    a + b
-}
 
 /// the callback will be invoked in another thread in 3 seconds (will arg "hi -- i'm from another thread")
 #[napi]
@@ -35,4 +26,27 @@ pub fn callback_test(
     });
 
     Ok(())
+}
+
+struct AsyncGreet {}
+
+impl Task for AsyncGreet {
+    type Output = String;
+    type JsValue = String;
+
+    fn compute(&mut self) -> Result<Self::Output> {
+        thread::sleep(std::time::Duration::from_secs(3));
+        Ok(format!("hi -- i'm from async task"))
+    }
+
+    fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
+        Ok(output)
+    }
+}
+
+
+/// the task will be resolved in 3 seconds (will return "hi -- i'm from async task")
+#[napi]
+fn async_task_test() -> AsyncTask<AsyncGreet> {
+    AsyncTask::new(AsyncGreet {})
 }
