@@ -3,7 +3,6 @@
 #[macro_use]
 extern crate napi_derive;
 
-mod declare;
 mod record;
 mod act;
 
