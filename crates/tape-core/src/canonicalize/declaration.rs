@@ -192,15 +192,15 @@ impl From<String> for CanonicalKey {
             "rshift" => CanonicalKey::RShift,
             "lctrl" => CanonicalKey::LCtrl,
             "rctrl" => CanonicalKey::RCtrl,
-            /// note: 'alt' on windows and linux, 'option' on mac
+            // note: 'alt' on windows and linux, 'option' on mac
             "lalt" => CanonicalKey::LAlt,
-            /// note: 'alt' on windows and linux, 'option' on mac
+            // note: 'alt' on windows and linux, 'option' on mac
             "ralt" => CanonicalKey::RAlt,
-            /// note: 'command' on mac, 'windows' on windows, 'super' on linux
+            // note: 'command' on mac, 'windows' on windows, 'super' on linux
             "lmeta" => CanonicalKey::LMeta,
-            /// note: 'command' on mac, 'windows' on windows, 'super' on linux
+            // note: 'command' on mac, 'windows' on windows, 'super' on linux
             "rmeta" => CanonicalKey::RMeta,
-            /// note: 'menu' on windows
+            // note: 'menu' on windows
             "menu" => CanonicalKey::Menu,
             "enter" => CanonicalKey::Enter,
             "backspace" => CanonicalKey::Backspace,
