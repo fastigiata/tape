@@ -1,1 +1,3 @@
-This is the front end for the tape-tauri project. (not a crate of `tape`)
+- for ui develop: `yarn run dev:front`
+- for backend develop: `cargo run --bin tape-tauri`
+- for both: `yarn run dev:tauri` or run above commands in different terminals
