@@ -1,6 +1,7 @@
 {
     "build": {
-        "beforeDevCommand": "yarn dev",
+        // here we manually start the dev server for the frontend
+        // "beforeDevCommand": "yarn dev",
         "beforeBuildCommand": "yarn build",
         "devPath": "http://localhost:1420",
         "distDir": "../dist",
@@ -8,7 +9,8 @@
     },
     "package": {
         "productName": "Tape",
-        "version": "0.1.0"
+        // the docs say 'If removed the version number from Cargo.toml is used.'
+        // "version": "0.1.0"
     },
     "tauri": {
         "allowlist": {
@@ -20,8 +22,9 @@
         },
         "bundle": {
             "active": true,
-            "targets": "all",
+            "targets": "nsis",
             "identifier": "com.lopo12123.tape",
+            "copyright": "Copyright (c) lopo 2022-present. All rights reserved",
             "icon": [
                 "icons/32x32.png",
                 "icons/128x128.png",
@@ -35,11 +38,15 @@
         },
         "windows": [
             {
+                "decorations": false,
                 "fullscreen": false,
                 "resizable": true,
+                "label": "main",
                 "title": "Tape",
                 "width": 800,
-                "height": 600
+                "height": 600,
+                "minWidth": 800,
+                "minHeight": 600,
             }
         ]
     }

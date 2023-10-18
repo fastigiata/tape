@@ -11,7 +11,7 @@ license = "MIT"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = ["shell-open"] }
+tauri = { version = "1.5", features = ["shell-open", "config-json5"] }
 serde.workspace = true
 serde_json.workspace = true
 
