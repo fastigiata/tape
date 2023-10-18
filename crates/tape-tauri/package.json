@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "dev:front": "vite --host",
-        "dev:tauri": "tauri --config ./backend/tauri.conf.json",
+        "dev:tauri": "tauri dev --config ./backend/tauri.conf.json5",
         "build": "vue-tsc && vite build",
         "serve": "vite preview"
     },
