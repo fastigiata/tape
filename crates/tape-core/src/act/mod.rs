@@ -85,8 +85,12 @@ impl Actor {
     }
 
     /// Start acting.
+    /// (asynchronously, you can use [finish](#method.finish) to interrupt the acting)
+    ///
     /// This will run in a separate thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the acting to finish.
+    /// ---
+    /// If you want to use synchronous acting, please call [act_sync](#method.act_sync).
     pub fn act(&mut self) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
@@ -171,6 +175,14 @@ impl Actor {
     pub fn finish(&mut self) {
         // set the working flag to false
         *self.mission_guard.lock().unwrap() = false;
+    }
+
+    /// Start acting
+    /// (synchronous, this will block until the acting is finished).
+    /// ---
+    /// If you want to use asynchronous acting, please call [act](#method.act).
+    pub fn act_sync(&self) {
+        todo!("not implemented yet")
     }
 }
 

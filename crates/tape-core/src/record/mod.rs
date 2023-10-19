@@ -87,13 +87,17 @@ impl Recorder {
         self.stop_signal = stop_signal;
     }
 
-    /// Start recording.
+    /// Start recording
+    /// (asynchronous, you can use [finish](#method.finish) to interrupt the recording).
+    ///
     /// This will run in a separate thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
     /// ---
     /// **on_finish**: a callback function that will be called when the recording is finished
     /// - If set to None, do nothing when the recording is finished
     /// - If set to Some(f), call f(script) when the recording is finished
+    /// ---
+    /// If you want to use synchronous recording, please call [record_sync](#method.record_sync).
     pub fn record(&self, on_finish: Option<Box<dyn FnOnce(Script) + Send>>) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
@@ -216,6 +220,19 @@ impl Recorder {
     pub fn finish(&self) {
         // set the working flag to false
         *self.mission_guard.lock().unwrap() = false;
+    }
+
+    /// Start recording
+    /// (synchronous, this will block until the recording is finished).
+    /// ---
+    /// return:
+    /// - **Ok(Script)**: The script being recorded
+    /// - **Err(())**: If you have not set the stop signal, this will return a Err(()).
+    /// This is by design rather than a bug (image a situation where you have not set the stop signal, then the recorder will never stop).
+    /// ---
+    /// If you want to use asynchronous recording, please call [record](#method.record).
+    pub fn record_sync(&self) -> Result<Script, ()> {
+        todo!("not implemented yet")
     }
 }
 
