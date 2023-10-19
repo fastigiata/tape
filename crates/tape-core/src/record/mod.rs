@@ -31,8 +31,10 @@ impl Script {
     }
 
     /// Bind actions into a script (use the creation time of the script to the current time as the duration)
-    pub fn bound(&mut self) {
+    /// Return a copy of the script
+    pub fn bound(&mut self) -> Script {
         self.duration = Utc::now().timestamp_millis() - self.ctime;
+        self.clone()
     }
 }
 
@@ -204,12 +206,11 @@ impl Recorder {
             };
 
             // bind the script
-            script.lock().unwrap().bound();
+            let script_copy = script.lock().unwrap().bound();
 
             // call the callback function if it is set
             if let Some(f) = on_finish {
-                let copy = script.lock().unwrap().clone();
-                f(copy);
+                f(script_copy);
             };
         });
     }
@@ -232,7 +233,116 @@ impl Recorder {
     /// ---
     /// If you want to use asynchronous recording, please call [record](#method.record).
     pub fn record_sync(&self) -> Result<Script, ()> {
-        todo!("not implemented yet")
+        if self.stop_signal.is_none() {
+            return Err(());
+        }
+
+        // set the working flag
+        *self.mission_guard.lock().unwrap() = true;
+
+        let record_type = self.record_type.clone();
+        // FIXME: maybe clone is not necessary
+        let stop_signal = self.stop_signal.clone().unwrap();
+        let mission_guard = Arc::clone(&self.mission_guard);
+        let script = Arc::clone(&self.script);
+
+        let ds = DeviceState::new();
+
+        // several guards
+        let _guard_kd;
+        let _guard_ku;
+        let _guard_md;
+        let _guard_mu;
+        let _guard_mm;
+        let _guard_quit;
+
+        // keyboard events
+        if record_type.with_keyboard() {
+            // keydown listener
+            let tmp1 = Arc::clone(&mission_guard);
+            let tmp2 = stop_signal.clone();
+            let tmp3 = Arc::clone(&script);
+            _guard_kd = ds.on_key_down(move |key| {
+                // if the stop signal is pressed, stop the recording
+                if &tmp2 == key {
+                    *tmp1.lock().unwrap() = false;
+                    return;
+                }
+
+                // push the action to the script
+                tmp3.lock().unwrap().add_keyboard_action(ActionType::Press, *key);
+            });
+
+            // keyup listener
+            let tmp1 = Arc::clone(&mission_guard);
+            let tmp2 = stop_signal.clone();
+            let tmp3 = Arc::clone(&script);
+            _guard_ku = ds.on_key_up(move |key| {
+                // if the stop signal is pressed, stop the recording
+                if &tmp2 == key {
+                    *tmp1.lock().unwrap() = false;
+                    return;
+                }
+
+                // push the action to the script
+                tmp3.lock().unwrap().add_keyboard_action(ActionType::Release, *key);
+            });
+        } else {
+            // if the recorder does not record keyboard events,
+            // we still need to listen to the stop signal
+            // keydown listener
+            let tmp1 = Arc::clone(&mission_guard);
+            let tmp2 = stop_signal.clone();
+            _guard_quit = ds.on_key_down(move |key| {
+                // if the stop signal is pressed, stop the recording
+                if &tmp2 == key {
+                    *tmp1.lock().unwrap() = false;
+                    return;
+                }
+            });
+        }
+
+        // mouse events
+        if record_type.with_mouse() {
+            // mousedown listener
+            let tmp1 = DeviceState::new();
+            let tmp2 = Arc::clone(&script);
+            _guard_md = ds.on_mouse_down(move |btn| {
+                tmp2.lock().unwrap().add_mouse_action(
+                    ActionType::Press, *btn,
+                    tmp1.get_mouse().coords,
+                );
+            });
+
+            // mouseup listener
+            let tmp1 = DeviceState::new();
+            let tmp2 = Arc::clone(&script);
+            _guard_mu = ds.on_mouse_up(move |btn| {
+                tmp2.lock().unwrap().add_mouse_action(
+                    ActionType::Release, *btn,
+                    tmp1.get_mouse().coords,
+                );
+            });
+
+            // mousemove listener
+            let tmp1 = Arc::clone(&script);
+            _guard_mm = ds.on_mouse_move(move |pos| {
+                tmp1.lock().unwrap().add_mouse_action(
+                    ActionType::Move, 0,
+                    *pos,
+                );
+            });
+        }
+
+        // do recording until the mission is finished
+        while *mission_guard.lock().unwrap() {
+            // sleep for a while to avoid too frequent checking
+            thread::sleep(Duration::from_millis(LOOP_GAP));
+        };
+
+        // bind the script
+        let r = Ok(script.lock().unwrap().bound());
+        r
     }
 }
 
@@ -254,5 +364,18 @@ mod unit_test {
         //     Err(e) => println!("err!\n{}", e),
         // }
         //
+    }
+
+    #[test]
+    fn record_sync() {
+        let recorder = Recorder::new(ActionSense::Keyboard, Some(CanonicalKey::Escape));
+        match recorder.record_sync() {
+            Ok(script) => {
+                println!("script: {:?}", script.publish());
+            }
+            Err(_) => {
+                println!("err!");
+            }
+        };
     }
 }
