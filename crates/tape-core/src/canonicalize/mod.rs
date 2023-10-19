@@ -111,6 +111,16 @@ impl Script {
         }
     }
 
+    /// Reset the script for coming recording
+    pub fn reset(&mut self) {
+        let t = Utc::now();
+        self.cursor = 0;
+        self.name = t.to_rfc3339();
+        self.ctime = t.timestamp_millis();
+        self.duration = 0;
+        self.actions.clear();
+    }
+
     /// Load a script from a TOML string.
     /// If the parsing is successful and the self-test passes, the script will be returned,
     /// otherwise an error message will be returned.
