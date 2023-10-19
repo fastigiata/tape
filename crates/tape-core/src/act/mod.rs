@@ -94,6 +94,7 @@ impl Actor {
     pub fn act(&mut self) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
+        self.script.reset_cursor();
 
         let cyclic_flag = Arc::clone(&self.cyclic);
         let stop_signal = self.stop_signal.clone();
