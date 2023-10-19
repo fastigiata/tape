@@ -181,8 +181,13 @@ impl Actor {
     /// Start acting
     /// (synchronous, this will block until the acting is finished).
     /// ---
+    /// return:
+    /// - **Ok(())**: The script being acted
+    /// - **Err(())**: If you have not set the stop signal and the script is set to be cyclic, this will return a Err(())
+    /// This is by design rather than a bug (image a situation where you want to act cyclically but you forget to set the stop signal, then the actor will never stop)
+    /// ---
     /// If you want to use asynchronous acting, please call [act](#method.act).
-    pub fn act_sync(&self) {
+    pub fn act_sync(&self) -> Result<(), ()> {
         todo!("not implemented yet")
     }
 }
