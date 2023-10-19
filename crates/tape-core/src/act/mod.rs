@@ -85,7 +85,7 @@ impl Actor {
     }
 
     /// Start acting.
-    /// This will work in a new thread, so it will not block the main thread.
+    /// This will run in a separate thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the acting to finish.
     pub fn act(&mut self) {
         // set the working flag

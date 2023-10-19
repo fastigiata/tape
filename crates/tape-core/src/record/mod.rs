@@ -88,7 +88,7 @@ impl Recorder {
     }
 
     /// Start recording.
-    /// This will work in a new thread, so it will not block the main thread.
+    /// This will run in a separate thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
     /// ---
     /// **on_finish**: a callback function that will be called when the recording is finished
