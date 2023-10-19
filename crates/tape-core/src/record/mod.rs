@@ -103,6 +103,7 @@ impl Recorder {
     pub fn record(&self, on_finish: Option<Box<dyn FnOnce(Script) + Send>>) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
+        self.script.lock().unwrap().reset();
 
         let record_type = self.record_type.clone();
         let stop_signal = self.stop_signal.clone();
@@ -239,6 +240,7 @@ impl Recorder {
 
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
+        self.script.lock().unwrap().reset();
 
         let record_type = self.record_type.clone();
         // FIXME: maybe clone is not necessary
@@ -369,12 +371,25 @@ mod unit_test {
     #[test]
     fn record_sync() {
         let recorder = Recorder::new(ActionSense::Keyboard, Some(CanonicalKey::Escape));
+        // first use of recorder
         match recorder.record_sync() {
             Ok(script) => {
-                println!("script: {:?}", script.publish());
+                println!("script 1: {:?}", script.publish());
             }
             Err(_) => {
-                println!("err!");
+                println!("err 2!");
+            }
+        };
+
+        thread::sleep(Duration::from_secs(3));
+
+        // reusing the recorder
+        match recorder.record_sync() {
+            Ok(script) => {
+                println!("script 2: {:?}", script.publish());
+            }
+            Err(_) => {
+                println!("err 2!");
             }
         };
     }
