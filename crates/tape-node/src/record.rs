@@ -27,20 +27,33 @@ impl NodeRecorder {
         }
     }
 
+    /// Set the type of the action to be recorded
+    ///
+    /// This has no effect on the current recording. (The listener is set once `record_callback` or `record_async` is called.)
     #[napi]
     pub fn set_record_type(&mut self, record_type: String) {
         self.inner.set_record_type(record_type.into());
     }
 
+    /// Set the key that stops the recording
+    ///
+    /// This has no effect on the current recording. (The signal is copied once `record_callback` or `record_async` is called.)
     #[napi]
     pub fn set_stop_signal(&mut self, stop_signal: Option<String>) {
         self.inner.set_stop_signal(stop_signal.map(Into::into));
     }
 
+    /// Start recording
+    /// (asynchronous, you can use `finish` to interrupt the recording).
+    ///
+    /// This will run in a separate thread, so it will not block the main thread.
+    /// On the other hand, you may need to wait in the main thread for the recording to finish.
+    /// ---
+    /// If you want to use synchronous recording, please call `record_async`.
     #[napi]
     pub fn record_callback(
         &mut self,
-        #[napi(ts_arg_type = "(v: FFISafeAction) => void")]
+        #[napi(ts_arg_type = "(v: FfiSafeAction) => void")]
         callback: JsFunction,
     ) -> Result<()> {
         let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = callback
@@ -55,11 +68,16 @@ impl NodeRecorder {
         Ok(())
     }
 
-    // #[napi]
-    // pub fn record_callback() {
-    // 
-    // }
+    /// Interrupt the recording started by `record_callback`
+    #[napi]
+    pub fn finish(&self) -> Result<()> {
+        self.inner.finish();
 
-    // TODO: record_callback | see https://napi.rs/docs/concepts/threadsafe-function
-    // TODO: record_async | see https://napi.rs/docs/concepts/async-task
+        Ok(())
+    }
+
+    // #[napi]
+    pub fn record_async() {
+        todo!()
+    }
 }
