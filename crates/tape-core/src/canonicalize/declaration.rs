@@ -140,7 +140,7 @@ impl From<String> for CanonicalKey {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str() {
             // Function keys  -- 16
-            "escape" => CanonicalKey::Escape,
+            "escape" | "esc" => CanonicalKey::Escape,
             "f1" => CanonicalKey::F1,
             "f2" => CanonicalKey::F2,
             "f3" => CanonicalKey::F3,
