@@ -243,7 +243,6 @@ impl Recorder {
         self.script.lock().unwrap().reset();
 
         let record_type = self.record_type.clone();
-        // FIXME: maybe clone is not necessary
         let stop_signal = self.stop_signal.clone().unwrap();
         let mission_guard = Arc::clone(&self.mission_guard);
         let script = Arc::clone(&self.script);
