@@ -13,8 +13,15 @@ pub struct NodeRecorder {
 
 #[napi]
 impl NodeRecorder {
+    /// create a new recorder
+    /// - record_type: the type of the recorder, can be "keyboard", "mouse" or "both"
+    /// - stop_signal: the signal to stop the recorder, can be one of valid 'CanonicalKey'
     #[napi(constructor)]
-    pub fn new(record_type: String, stop_signal: Option<String>) -> NodeRecorder {
+    pub fn new(
+        #[napi(ts_arg_type = "'keyboard' | 'mouse' | 'both'")]
+        record_type: String,
+        stop_signal: Option<String>,
+    ) -> NodeRecorder {
         NodeRecorder {
             inner: Recorder::new(record_type.into(), stop_signal.map(Into::into))
         }
