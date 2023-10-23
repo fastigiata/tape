@@ -1,13 +1,18 @@
-import {callbackTest, Recorder} from "../index.js"
+import {Recorder} from "../index.js"
 
+const recorder = new Recorder('keyboard', 'esc')
 
-// const recorder = new Recorder('keyboard', 'esc')
-// recorder.record()
-
-callbackTest(v => {
-    console.log('log fron callbackTest', v)
+// callback test
+recorder.recordCallback((v) => {
+    console.log(v)
 })
-console.log('non blocking!')
+
+// the recorder will be finished after 5 seconds
 setTimeout(() => {
-    console.log('task end!')
+    recorder.finish()
 }, 5_000)
+
+// async test
+// TODO
+
+console.log('this will not be blocked and will be printed immediately')
