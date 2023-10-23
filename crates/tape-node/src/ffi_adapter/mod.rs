@@ -36,9 +36,9 @@ impl From<Action> for FFISafeAction {
                 },
             }.to_string(),
             action_key: match value.action {
-                CanonicalAction::Keyboard(_, kkey) => kkey,
-                CanonicalAction::Mouse(_, mkey, _) => mkey,
-            }.to_string(),
+                CanonicalAction::Keyboard(_, kkey) => kkey.to_string(),
+                CanonicalAction::Mouse(_, mkey, _) => mkey.to_string(),
+            },
             action_position: None,
         }
     }

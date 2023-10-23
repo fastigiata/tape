@@ -1,4 +1,10 @@
+use napi::{
+    bindgen_prelude::{Result},
+    JsFunction,
+    threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
+};
 use tape_core::record::Recorder;
+use crate::ffi_adapter::{FFISafeAction, FFISafeScript};
 
 #[napi(js_name = "Recorder")]
 pub struct NodeRecorder {
@@ -25,10 +31,21 @@ impl NodeRecorder {
     }
 
     #[napi]
-    pub fn record(&mut self) {
-        self.inner.record(Some(Box::new(|script| {
-            println!("done!");
+    pub fn record_callback(
+        &mut self,
+        #[napi(ts_arg_type = "(v: FFISafeAction) => void")]
+        callback: JsFunction,
+    ) -> Result<()> {
+        let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = callback
+            .create_threadsafe_function(0, |ctx| {
+                Ok(vec![ctx.value])
+            })?;
+
+        self.inner.record(Some(Box::new(move |script| {
+            tsfn.call(script.into(), ThreadsafeFunctionCallMode::NonBlocking);
         })));
+
+        Ok(())
     }
 
     // #[napi]
