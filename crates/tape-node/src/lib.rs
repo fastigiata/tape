@@ -8,6 +8,7 @@ use napi::{bindgen_prelude::{Result, AsyncTask}, Env, JsFunction, Task, threadsa
 
 mod record;
 mod act;
+mod ffi_adapter;
 
 // region callback example
 /// the callback will be invoked in another thread in 3 seconds (will arg "hi -- i'm from another thread")
