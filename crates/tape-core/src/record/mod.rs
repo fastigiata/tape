@@ -65,6 +65,11 @@ impl Default for Recorder {
 }
 
 impl Recorder {
+    /// internal use for tape-node
+    pub fn has_stop_signal(&self) -> bool {
+        self.stop_signal.is_some()
+    }
+
     /// Create a new recorder
     pub fn new(record_type: ActionSense, stop_signal: Option<CanonicalKey>) -> Self {
         Recorder {
@@ -370,8 +375,14 @@ mod unit_test {
     #[test]
     fn record_sync() {
         let recorder = Recorder::new(ActionSense::Keyboard, Some(CanonicalKey::Escape));
+
+        // here, we use Box to create a pointer to the closure,
+        // rather then capture the variable 'recorder'.
+        // so that we can reuse the recorder later.
+        let task: Box<dyn Fn() -> Result<Script, ()>> = Box::new(|| recorder.record_sync());
+
         // first use of recorder
-        match recorder.record_sync() {
+        match task() {
             Ok(script) => {
                 println!("script 1: {:?}", script.publish());
             }
@@ -382,14 +393,15 @@ mod unit_test {
 
         thread::sleep(Duration::from_secs(3));
 
-        // reusing the recorder
-        match recorder.record_sync() {
-            Ok(script) => {
-                println!("script 2: {:?}", script.publish());
-            }
-            Err(_) => {
-                println!("err 2!");
-            }
-        };
+        println!("task done! 'record' is still here! {}", recorder.has_stop_signal());
+        // // reusing the recorder
+        // match recorder.record_sync() {
+        //     Ok(script) => {
+        //         println!("script 2: {:?}", script.publish());
+        //     }
+        //     Err(_) => {
+        //         println!("err 2!");
+        //     }
+        // };
     }
 }
