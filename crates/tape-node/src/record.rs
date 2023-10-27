@@ -1,13 +1,37 @@
 use napi::{
-    bindgen_prelude::{Result},
-    JsFunction,
+    bindgen_prelude::{AsyncTask, Result},
+    Env, Error, JsFunction, Status, Task,
     threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
 };
+use tape_core::canonicalize::Script;
 use tape_core::record::Recorder;
-use crate::ffi_adapter::{FFISafeAction, FFISafeScript};
+use crate::ffi_adapter::{FFISafeScript};
+
+struct AsyncRecord {
+    // TODO: fix error here
+    task: Box<dyn Fn() -> std::result::Result<Script, ()> + Send>,
+}
+
+impl Task for AsyncRecord {
+    type Output = Script;
+    type JsValue = FFISafeScript;
+
+    fn compute(&mut self) -> Result<Self::Output> {
+        (self.task)().map_err(|_| Error::new(Status::WouldDeadlock, "no stop signal set before calling record_async"))
+    }
+
+    fn resolve(&mut self, _env: Env, output: Self::Output) -> Result<Self::JsValue> {
+        Ok(output.into())
+    }
+
+    fn reject(&mut self, _env: Env, err: Error) -> Result<Self::JsValue> {
+        Err(err)
+    }
+}
 
 #[napi(js_name = "Recorder")]
 pub struct NodeRecorder {
+    // TODO: consider using arc for async usage
     inner: Recorder,
 }
 
@@ -43,20 +67,20 @@ impl NodeRecorder {
         self.inner.set_stop_signal(stop_signal.map(Into::into));
     }
 
-    /// Start recording
-    /// (asynchronous, you can use `finish` to interrupt the recording).
+    /// Start recording (The record will stop when the stop signal is received,
+    /// you can also use the `finish` to interrupt the recording manually).
     ///
-    /// This will run in a separate thread, so it will not block the main thread.
+    /// This will run in a separate thread (created by `std::thread::spawn`), so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
     /// ---
-    /// If you want to use synchronous recording, please call `record_async`.
+    /// see `record_async` for promise-like usage
     #[napi]
     pub fn record_callback(
         &mut self,
         #[napi(ts_arg_type = "(v: FfiSafeAction) => void")]
-        callback: JsFunction,
+        on_finish: JsFunction,
     ) -> Result<()> {
-        let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = callback
+        let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = on_finish
             .create_threadsafe_function(0, |ctx| {
                 Ok(vec![ctx.value])
             })?;
@@ -76,8 +100,15 @@ impl NodeRecorder {
         Ok(())
     }
 
-    // #[napi]
-    pub fn record_async() {
-        todo!()
+    /// Start recording (The record will not stop until the stop signal is received,
+    /// that is, you have to set the stop signal before calling this function or it will throw an error directly).
+    ///
+    /// This will run in a separate thread (created by `xxx`), so it will not block the main thread.
+    /// ---
+    /// see `record_callback` for callback-style usage
+    #[napi]
+    pub fn record_async(&self) -> AsyncTask<AsyncRecord> {
+        // TODO: implement async usage
+        AsyncTask::new(AsyncRecord { task: Box::new(|| self.inner.record_sync()) })
     }
 }
