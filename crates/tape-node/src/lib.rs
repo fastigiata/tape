@@ -43,7 +43,7 @@ impl Task for AsyncGreet {
         Ok(format!("hi -- i'm from async task"))
     }
 
-    fn resolve(&mut self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
+    fn resolve(&mut self, _env: Env, output: Self::Output) -> Result<Self::JsValue> {
         Ok(output)
     }
 }
