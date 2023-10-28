@@ -41,7 +41,10 @@ impl Script {
 /// The gap between two loops
 const LOOP_GAP: u64 = 100;
 
-/// A **recorder** is a person who records your [action](../canonicalize/struct.Action.html)s into a [script](../canonicalize/struct.Script.html) for an [actor](../act/struct.Actor.html) to perform
+/// A **recorder** is a person who records your [action](../canonicalize/struct.Action.html)s into a [script](../canonicalize/struct.Script.html) for an [actor](../act/struct.Actor.html) to perform.
+///
+/// ---
+/// - The recorder does not internally determine whether you call `record/record_sync` again on the working recorder. You need to judge by yourself to avoid unexpected behavior (use [is_working](#method.is_working)).
 pub struct Recorder {
     /// The type of the action to be recorded
     record_type: ActionSense,
@@ -65,9 +68,14 @@ impl Default for Recorder {
 }
 
 impl Recorder {
-    /// internal use for tape-node
+    /// Whether the recorder has a stop signal
     pub fn has_stop_signal(&self) -> bool {
         self.stop_signal.is_some()
+    }
+
+    /// Check whether the actor is working
+    pub fn is_working(&self) -> bool {
+        *self.mission_guard.lock().unwrap()
     }
 
     /// Create a new recorder

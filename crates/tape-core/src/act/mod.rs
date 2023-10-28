@@ -26,6 +26,9 @@ impl Script {
 }
 
 /// An **actor** is a person who performs a [script](../canonicalize/struct.Script.html)  of [action](../act/struct.Action.html)s recorded by a [recorder](../record/struct.Recorder.html)
+///
+/// ---
+/// - The actor does not internally determine whether you call `act/act_sync` again on the working actor. You need to judge by yourself to avoid unexpected behavior (use [is_working](#method.is_working)).
 pub struct Actor {
     /// The type of the action to be acted
     act_type: ActionSense,
@@ -52,6 +55,16 @@ impl Default for Actor {
 }
 
 impl Actor {
+    /// Whether the actor has a stop signal
+    pub fn has_stop_signal(&self) -> bool {
+        self.stop_signal.is_some()
+    }
+
+    /// Check whether the actor is working
+    pub fn is_working(&self) -> bool {
+        *self.mission_guard.lock().unwrap()
+    }
+
     /// Create a new actor
     pub fn new(script: Script, cyclic: bool, act_type: ActionSense, stop_signal: Option<CanonicalKey>) -> Self {
         Actor {
@@ -70,6 +83,13 @@ impl Actor {
         self.script = script;
     }
 
+    /// Set whether the actor is acting cyclically.
+    ///
+    /// Can affect the current acting cause 'cyclic' is checked before every loop.
+    pub fn set_cyclic(&mut self, cyclic: bool) {
+        *self.cyclic.lock().unwrap() = cyclic;
+    }
+
     /// Set the type of the action to be acted.
     ///
     /// This has no effect on the current acting. (The script is copied and filtered once [act](#method.act) is called)
@@ -77,11 +97,11 @@ impl Actor {
         self.act_type = act_type;
     }
 
-    /// Set whether the actor is acting cyclically.
+    /// Set the key that stops the acting.
     ///
-    /// Can affect the current acting cause 'cyclic' is checked before every loop.
-    pub fn set_cyclic(&mut self, cyclic: bool) {
-        *self.cyclic.lock().unwrap() = cyclic;
+    /// This has no effect on the current acting. (The signal is copied once [act](#method.act) is called)
+    pub fn set_stop_signal(&mut self, stop_signal: Option<CanonicalKey>) {
+        self.stop_signal = stop_signal;
     }
 
     /// Start acting.
