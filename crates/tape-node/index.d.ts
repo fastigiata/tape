@@ -42,7 +42,7 @@ export class Recorder {
    *
    * This has no effect on the current recording. (The listener is set once `record_callback` or `record_async` is called.)
    */
-  setRecordType(recordType: string): void
+  setRecordType(recordType: 'keyboard' | 'mouse' | 'both'): void
   /**
    * Set the key that stops the recording
    *
@@ -50,15 +50,24 @@ export class Recorder {
    */
   setStopSignal(stopSignal?: string | undefined | null): void
   /**
-   * Start recording
-   * (asynchronous, you can use `finish` to interrupt the recording).
+   * Start recording (The record will stop when the stop signal is received,
+   * you can also use the `finish` to interrupt the recording manually).
    *
-   * This will run in a separate thread, so it will not block the main thread.
+   * This will run in a separate thread (created by `std::thread::spawn`), so it will not block the main thread.
    * On the other hand, you may need to wait in the main thread for the recording to finish.
    * ---
-   * If you want to use synchronous recording, please call `record_async`.
+   * see `record_async` for promise-like usage
    */
-  recordCallback(callback: (v: FfiSafeAction) => void): void
+  recordCallback(onFinish: (v: FfiSafeAction) => void): void
   /** Interrupt the recording started by `record_callback` */
   finish(): void
+  /**
+   * Start recording (The record will not stop until the stop signal is received,
+   * that is, you have to set the stop signal before calling this function or it will throw an error directly).
+   *
+   * This will run in a separate thread (created by `xxx`), so it will not block the main thread.
+   * ---
+   * see `record_callback` for callback-style usage
+   */
+  recordAsync(): Promise<unknown>
 }
