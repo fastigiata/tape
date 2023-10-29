@@ -76,6 +76,7 @@ impl NodeRecorder {
     ///
     /// This will run in a separate thread (created by `std::thread::spawn`), so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the recording to finish.
+    ///
     /// ---
     /// see `record_async` for promise-like usage
     #[napi]
@@ -108,9 +109,10 @@ impl NodeRecorder {
     /// that is, you have to set the stop signal before calling this function or it will throw an error directly).
     ///
     /// This will run in a separate thread (created by `xxx`), so it will not block the main thread.
+    ///
     /// ---
     /// see `record_callback` for callback-style usage
-    #[napi]
+    #[napi(ts_return_type="Promise<FfiSafeScript>")]
     pub fn record_async(&self) -> AsyncTask<AsyncRecord> {
         let shared_ptr = self.inner.clone();
         AsyncTask::new(AsyncRecord { worker: shared_ptr })
