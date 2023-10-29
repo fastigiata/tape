@@ -81,7 +81,7 @@ impl NodeRecorder {
     #[napi]
     pub fn record_callback(
         &mut self,
-        #[napi(ts_arg_type = "(v: FfiSafeAction) => void")]
+        #[napi(ts_arg_type = "(v: FfiSafeScript) => void")]
         on_finish: JsFunction,
     ) -> Result<()> {
         let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = on_finish
