@@ -259,6 +259,19 @@ impl From<String> for CanonicalKey {
     }
 }
 
+impl From<String> for CanonicalButton {
+    fn from(value: String) -> Self {
+        match value.to_lowercase().as_str() {
+            "left" => CanonicalButton::Left,
+            "right" => CanonicalButton::Right,
+            "middle" => CanonicalButton::Middle,
+            "back" => CanonicalButton::Back,
+            "forward" => CanonicalButton::Forward,
+            _ => CanonicalButton::Unknown,
+        }
+    }
+}
+
 impl ToString for CanonicalKey {
     fn to_string(&self) -> String {
         match self {
