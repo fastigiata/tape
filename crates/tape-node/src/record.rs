@@ -108,7 +108,7 @@ impl NodeRecorder {
     /// Start recording (The record will not stop until the stop signal is received,
     /// that is, you have to set the stop signal before calling this function or it will throw an error directly).
     ///
-    /// This will run in a separate thread (created by `xxx`), so it will not block the main thread.
+    /// This will run in a separate thread (created by `libuv`), so it will not block the main thread.
     ///
     /// ---
     /// see `record_callback` for callback-style usage

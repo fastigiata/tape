@@ -7,11 +7,11 @@ use napi::{
 use tape_core::act::Actor;
 use crate::ffi_adapter::FfiSafeScript;
 
-pub struct AsyncActor {
+pub struct AsyncAct {
     worker: Arc<Mutex<Actor>>,
 }
 
-impl Task for AsyncActor {
+impl Task for AsyncAct {
     type Output = ();
     type JsValue = ();
 
@@ -126,5 +126,16 @@ impl NodeActor {
         Ok(())
     }
 
-    // TODO
+    /// Start acting (The act will not stop until the stop signal is received,
+    /// that is, you have to set the stop signal before calling this function or it will throw an error directly).
+    ///
+    /// This will run in a separate thread (created by `libuv`), so it will not block the main thread.
+    ///
+    /// ---
+    /// see `act_callback` for callback-style usage
+    #[napi(ts_return_type = "Promise<void>")]
+    pub fn act_async(&self) -> AsyncTask<AsyncAct> {
+        let shared_ptr = self.inner.clone();
+        AsyncTask::new(AsyncAct { worker: shared_ptr })
+    }
 }
