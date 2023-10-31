@@ -97,6 +97,11 @@ impl NodeActor {
     /// This will run in a separate thread (created by `std::thread::spawn`), so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the acting to finish.
     ///
+    /// If `on_finish` is set, the callback will be invoked after each complete execution
+    /// (you can use it to count how many complete act have been done, etc.). But note that
+    /// if the `cyclic` is `true` and the last time it is interrupted by the stop signal,
+    /// then the dropped act will not trigger the callback (since it has not yet reached 'on_finish')
+    ///
     /// ---
     /// see `act_async` for promise-like usage
     #[napi]
@@ -130,6 +135,9 @@ impl NodeActor {
     /// that is, you have to set the stop signal before calling this function or it will throw an error directly).
     ///
     /// This will run in a separate thread (created by `libuv`), so it will not block the main thread.
+    ///
+    /// The `Promise` will be resolved after the entire task ends.
+    /// That is, if `cyclic` is `true`, it will not end until stop signal is pressed.
     ///
     /// ---
     /// see `act_callback` for callback-style usage
