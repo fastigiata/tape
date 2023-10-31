@@ -81,7 +81,7 @@ impl NodeRecorder {
     /// see `record_async` for promise-like usage
     #[napi]
     pub fn record_callback(
-        &mut self,
+        &self,
         #[napi(ts_arg_type = "(v: FfiSafeScript) => void")]
         on_finish: JsFunction,
     ) -> Result<()> {
@@ -112,7 +112,7 @@ impl NodeRecorder {
     ///
     /// ---
     /// see `record_callback` for callback-style usage
-    #[napi(ts_return_type="Promise<FfiSafeScript>")]
+    #[napi(ts_return_type = "Promise<FfiSafeScript>")]
     pub fn record_async(&self) -> AsyncTask<AsyncRecord> {
         let shared_ptr = self.inner.clone();
         AsyncTask::new(AsyncRecord { worker: shared_ptr })
