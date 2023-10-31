@@ -27,19 +27,19 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-#          - host: macos-latest
-#            target: x86_64-apple-darwin
-#            build: |
-#              yarn build
-#              strip -x *.node
+          #          - host: macos-latest
+          #            target: x86_64-apple-darwin
+          #            build: |
+          #              yarn build
+          #              strip -x *.node
           - host: windows-latest
             build: yarn build
             target: x86_64-pc-windows-msvc
-#          - host: macos-latest
-#            target: aarch64-apple-darwin
-#            build: |
-#              yarn build --target aarch64-apple-darwin
-#              strip -x *.node
+          #          - host: macos-latest
+          #            target: aarch64-apple-darwin
+          #            build: |
+          #              yarn build --target aarch64-apple-darwin
+          #              strip -x *.node
           - host: windows-latest
             target: aarch64-pc-windows-msvc
             build: yarn build --target aarch64-pc-windows-msvc
@@ -53,7 +53,7 @@ jobs:
         with:
           node-version: 18
           check-latest: true
-#          cache: yarn
+      #          cache: yarn
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
@@ -106,8 +106,11 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: bindings-${{ matrix.settings.target }}
-          path: crates/tape-node/${{ env.APP_NAME }}.*.node
+          name: assets-bundle
+          path: |
+            crates/tape-node/${{ env.APP_NAME }}.*.node
+            crates/tape-node/index.js
+            crates/tape-node/index.d.ts
           if-no-files-found: error
 #  publish:
 #    name: Publish
