@@ -144,10 +144,6 @@ impl Actor {
             // use 'Instant' to record the beginning time
             let mut begin_time = Instant::now();
 
-            if let Some(cb) = on_finish {
-                cb()
-            }
-
             // do acting until the mission is finished
             while *mission_guard.lock().unwrap() {
                 // get the elapsed time, calculate the frame on the 'timeline'
