@@ -43,8 +43,6 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v3
-      - name: Enter specific folder
-        run: cd crates/tape-node
       - name: Setup node
         uses: actions/setup-node@v3
         if: ${{ !matrix.settings.docker }}
@@ -52,6 +50,8 @@ jobs:
           node-version: 18
           check-latest: true
 #          cache: yarn
+      - name: Switch yarn version
+        run: corepack enable & yarn set version berry & yarn --version
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
@@ -98,7 +98,7 @@ jobs:
           options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
           run: ${{ matrix.settings.build }}
       - name: Build
-        run: ${{ matrix.settings.build }}
+        run: cd crates/tape-node & ${{ matrix.settings.build }}
         if: ${{ !matrix.settings.docker }}
         shell: bash
       - name: Upload artifact
