@@ -43,8 +43,6 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v3
-      - name: Enter specific folder
-        run: cd crates/tape-node
       - name: Setup node
         uses: actions/setup-node@v3
         if: ${{ !matrix.settings.docker }}
@@ -52,6 +50,10 @@ jobs:
           node-version: 18
           check-latest: true
           cache: yarn
+      - name: Switch yarn version
+        run: yarn set version berry & yarn --version
+      - name: Enter specific folder
+        run: cd crates/tape-node
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         if: ${{ !matrix.settings.docker }}
