@@ -51,7 +51,7 @@ jobs:
           check-latest: true
           cache: yarn
       - name: Switch yarn version
-        run: yarn set version berry & yarn --version
+        run: yarn set version 3.x & yarn --version
       - name: Enter specific folder
         run: cd crates/tape-node
       - name: Install
