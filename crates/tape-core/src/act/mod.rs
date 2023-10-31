@@ -78,28 +78,28 @@ impl Actor {
 
     /// Set the script to be acted.
     ///
-    /// This has no effect on the current acting. (The script is copied once [act](#method.act) is called)
+    /// This has no effect on the current acting. (The script is cloned once [act](#method.act) is called)
     pub fn new_script(&mut self, script: Script) {
         self.script = script;
     }
 
     /// Set whether the actor is acting cyclically.
     ///
-    /// Can affect the current acting cause 'cyclic' is checked before every loop.
+    /// Can affect the current acting cause 'cyclic' will be checked before every loop.
     pub fn set_cyclic(&mut self, cyclic: bool) {
         *self.cyclic.lock().unwrap() = cyclic;
     }
 
     /// Set the type of the action to be acted.
     ///
-    /// This has no effect on the current acting. (The script is copied and filtered once [act](#method.act) is called)
+    /// This has no effect on the current acting. (The script is cloned and filtered once [act](#method.act) is called)
     pub fn set_act_type(&mut self, act_type: ActionSense) {
         self.act_type = act_type;
     }
 
     /// Set the key that stops the acting.
     ///
-    /// This has no effect on the current acting. (The signal is copied once [act](#method.act) is called)
+    /// This has no effect on the current acting. (The signal is cloned once [act](#method.act) is called)
     pub fn set_stop_signal(&mut self, stop_signal: Option<CanonicalKey>) {
         self.stop_signal = stop_signal;
     }
@@ -110,8 +110,12 @@ impl Actor {
     /// This will run in a separate thread, so it will not block the main thread.
     /// On the other hand, you may need to wait in the main thread for the acting to finish.
     /// ---
+    /// **on_finish**: a callback function that will be called when every acting is finished
+    /// - If set to None, do nothing when the acting is finished
+    /// - If set to Some(f), call f(script) when every acting is finished
+    /// ---
     /// If you want to use synchronous acting, please call [act_sync](#method.act_sync).
-    pub fn act(&mut self) {
+    pub fn act(&mut self, on_finish: Option<Box<dyn Fn() + Send>>) {
         // set the working flag
         *self.mission_guard.lock().unwrap() = true;
         self.script.reset_cursor();
@@ -139,6 +143,10 @@ impl Actor {
 
             // use 'Instant' to record the beginning time
             let mut begin_time = Instant::now();
+
+            if let Some(cb) = on_finish {
+                cb()
+            }
 
             // do acting until the mission is finished
             while *mission_guard.lock().unwrap() {
@@ -177,13 +185,18 @@ impl Actor {
                         thread::sleep(Duration::from_millis((script_copy.duration - elapsed_ms) as u64));
                     }
 
-                    // 2 - check whether it is cyclic
+                    // 2. - now that the mission has completely ended, execute the callback (if any)
+                    if let Some(cb) = &on_finish {
+                        cb()
+                    }
+
+                    // 3 - check whether it is cyclic
                     if *cyclic_flag.lock().unwrap() {
-                        // 2.1 - if cyclic, reset the cursor and the beginning time
+                        // 3.1 - if does, reset the cursor and the beginning time
                         script_copy.reset_cursor();
                         begin_time = Instant::now();
                     } else {
-                        // 2.2 - if not, finish the mission
+                        // 3.2 - if not, finish the mission
                         *mission_guard.lock().unwrap() = false;
                         return;
                     }
