@@ -5,7 +5,7 @@ use napi::{
     threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode},
 };
 use tape_core::act::Actor;
-use crate::ffi_adapter::FFISafeScript;
+use crate::ffi_adapter::FfiSafeScript;
 
 pub struct AsyncActor {
     worker: Arc<Mutex<Actor>>,
@@ -43,7 +43,7 @@ impl NodeActor {
     /// - stop_signal: the signal to stop the acter, can be one of valid 'CanonicalKey'
     #[napi(constructor)]
     pub fn new(
-        script: FFISafeScript,
+        script: FfiSafeScript,
         cyclic: bool,
         #[napi(ts_arg_type = "'keyboard' | 'mouse' | 'both'")]
         act_type: String,
@@ -59,7 +59,7 @@ impl NodeActor {
     ///
     /// This has no effect on the current acting. (The script is cloned once `act_callback` or `act_async` is called)
     #[napi]
-    pub fn new_script(&self, script: FFISafeScript) {
+    pub fn new_script(&self, script: FfiSafeScript) {
         self.inner.lock().unwrap().new_script(script.into());
     }
 

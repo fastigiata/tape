@@ -66,7 +66,7 @@ impl Into<Action> for FFISafeAction {
 }
 
 #[napi(object)]
-pub struct FFISafeScript {
+pub struct FfiSafeScript {
     /// The name of the script, default to the timestamp of creation
     pub name: String,
     /// The timestamp of creation of the script
@@ -77,9 +77,9 @@ pub struct FFISafeScript {
     pub actions: Vec<FFISafeAction>,
 }
 
-impl From<Script> for FFISafeScript {
+impl From<Script> for FfiSafeScript {
     fn from(value: Script) -> Self {
-        FFISafeScript {
+        FfiSafeScript {
             name: value.name,
             ctime: value.ctime,
             duration: value.duration,
@@ -88,8 +88,8 @@ impl From<Script> for FFISafeScript {
     }
 }
 
-impl From<FFISafeScript> for Script {
-    fn from(value: FFISafeScript) -> Self {
+impl From<FfiSafeScript> for Script {
+    fn from(value: FfiSafeScript) -> Self {
         Script {
             cursor: 0,
             name: value.name,

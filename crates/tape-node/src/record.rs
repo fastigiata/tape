@@ -6,7 +6,7 @@ use napi::{
 };
 use tape_core::canonicalize::Script;
 use tape_core::record::Recorder;
-use crate::ffi_adapter::{FFISafeScript};
+use crate::ffi_adapter::{FfiSafeScript};
 
 pub struct AsyncRecord {
     worker: Arc<Mutex<Recorder>>,
@@ -14,7 +14,7 @@ pub struct AsyncRecord {
 
 impl Task for AsyncRecord {
     type Output = Script;
-    type JsValue = FFISafeScript;
+    type JsValue = FfiSafeScript;
 
     fn compute(&mut self) -> Result<Self::Output> {
         self.worker.lock().unwrap().record_sync()
@@ -85,7 +85,7 @@ impl NodeRecorder {
         #[napi(ts_arg_type = "(v: FfiSafeScript) => void")]
         on_finish: JsFunction,
     ) -> Result<()> {
-        let tsfn: ThreadsafeFunction<FFISafeScript, ErrorStrategy::Fatal> = on_finish
+        let tsfn: ThreadsafeFunction<FfiSafeScript, ErrorStrategy::Fatal> = on_finish
             .create_threadsafe_function(0, |ctx| {
                 Ok(vec![ctx.value])
             })?;
