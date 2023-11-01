@@ -502,7 +502,7 @@ Keyboard = ["Press", "KeyI"]
         // sleep 3 seconds for the user to prepare
         thread::sleep(Duration::from_secs(3));
 
-        actor.act();
+        actor.act(None);
 
         // sleep 8 seconds for the actor to preform
         thread::sleep(Duration::from_secs(8));
